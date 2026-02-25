@@ -1,0 +1,41 @@
+"""Multicast Group API models."""
+
+from .models import (
+    AddDevicesWithMulticastGroupRequest,
+    AddDevicesWithMulticastGroupResponse,
+    AddGatewaysWithMulticastGroupRequest,
+    AddGatewaysWithMulticastGroupResponse,
+    CreateMulticastGroupRequest,
+    CreateMulticastGroupResponse,
+    DeleteMulticastGroupResponse,
+    GetGatewaysByMulticastGroupResponse,
+    GetMulticastGroupResponse,
+    GetMulticastGroupsResponse,
+    MulticastGroupNS,
+    RemoveDevicesFromMulticastGroupRequest,
+    RemoveDevicesFromMulticastGroupResponse,
+    RemoveGatewaysFromMulticastGroupRequest,
+    RemoveGatewaysFromMulticastGroupResponse,
+    UpdateMulticastGroupRequest,
+    UpdateMulticastGroupResponse,
+)
+
+__all__ = [
+    "AddDevicesWithMulticastGroupRequest",
+    "AddDevicesWithMulticastGroupResponse",
+    "AddGatewaysWithMulticastGroupRequest",
+    "AddGatewaysWithMulticastGroupResponse",
+    "CreateMulticastGroupRequest",
+    "CreateMulticastGroupResponse",
+    "DeleteMulticastGroupResponse",
+    "GetGatewaysByMulticastGroupResponse",
+    "GetMulticastGroupResponse",
+    "GetMulticastGroupsResponse",
+    "MulticastGroupNS",
+    "RemoveDevicesFromMulticastGroupRequest",
+    "RemoveDevicesFromMulticastGroupResponse",
+    "RemoveGatewaysFromMulticastGroupRequest",
+    "RemoveGatewaysFromMulticastGroupResponse",
+    "UpdateMulticastGroupRequest",
+    "UpdateMulticastGroupResponse",
+]
