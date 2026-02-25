@@ -1,8 +1,8 @@
 [project]
 name = "machineq"
 version = "0.0.1"
-description = "MachineQ Python APIs"
-authors = [{ name = "Oleg Zvonarov", email = "" }]
+description = "Python package to access MachineQ APIs"
+authors = [{ name = "Oleg Zvonarov", email = "19969581+OlegZv@users.noreply.github.com" }]
 readme = "README.md"
 keywords = ['python']
 requires-python = ">=3.10,<4.0"
@@ -18,25 +18,25 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "httpx>=0.28.1",
-    "pydantic>=2.12.5",
+    "httpx==0.28.1",
+    "pydantic==2.12.5",
 ]
 
 [project.urls]
-Homepage = "https://OlegZv.github.io/machineq/"
+Homepage = "https://github.com/OlegZv/machineq"
 Repository = "https://github.com/OlegZv/machineq"
-Documentation = "https://OlegZv.github.io/machineq/"
+Documentation = "https://github.com/OlegZv/machineq"
 
 [dependency-groups]
 dev = [
-    "pytest>=9.0.2",
-    "tox-uv>=1.29.0",
-    "deptry>=0.24.0",
-    "ty>=0.0.14",
-    "pytest-cov>=7.0.0",
+    "pytest==9.0.2",
+    "tox-uv==1.29.0",
+    "deptry==0.24.0",
+    "ty==0.0.14",
+    "pytest-cov==7.0.0",
     "ruff==0.15.2",
-    "prek>=0.3.3",
-    "ipykernel>=7.2.0",
+    "prek==0.3.3",
+    "ipykernel==7.2.0",
     "python-dotenv==1.2.1",
 ]
 
