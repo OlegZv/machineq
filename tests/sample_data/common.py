@@ -28,7 +28,7 @@ def random_name() -> str:
 
 def random_password() -> str:
     """Generate a random password."""
-    return random_part(16) + "*"
+    return random_part(16) + "*aB1"
 
 
 def random_deveui() -> str:
