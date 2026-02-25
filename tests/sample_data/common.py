@@ -3,7 +3,7 @@
 # ruff: noqa: S311 (because these random generators are only used for testing purposes)
 import random
 import string
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def random_part(length: int = 8) -> str:
@@ -28,7 +28,7 @@ def random_name() -> str:
 
 def random_password() -> str:
     """Generate a random password."""
-    return random_part(16) + "*"
+    return random_part(16) + "*aB1"
 
 
 def random_deveui() -> str:
@@ -53,7 +53,7 @@ def random_hex(length: int = 32) -> str:
 
 def iso_timestamp(offset_days: int = 0) -> str:
     """Generate an ISO 8601 timestamp."""
-    dt = datetime.now(UTC) + timedelta(days=offset_days)
+    dt = datetime.now(timezone.utc) + timedelta(days=offset_days)
     return dt.isoformat() + "Z"
 
 

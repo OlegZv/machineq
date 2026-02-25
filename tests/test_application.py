@@ -1,5 +1,7 @@
 """Tests for Application API."""
 
+from time import sleep
+
 import pytest
 from sample_data.common import random_name
 
@@ -100,6 +102,8 @@ class TestApplications:
         created_application = applications_api.get(application.id)
         assert created_application.UUID == application.UUID
         try:
+            # give some time for the application to be fully created before trying to use it
+            sleep(2)
             # ensure we can get a token with this application
             new_auth = MqAuth(application.UUID, application.client_secret)
             assert new_auth.token != ""
@@ -112,7 +116,7 @@ class TestApplications:
             # test refresh
             new_secret = applications_api.refresh_token(application.id)
             assert new_secret != application.client_secret
-
+            sleep(2)
             # ensure the new secret works
             new_client = SyncClient(application.UUID, new_secret)
             response = new_client.account.get()

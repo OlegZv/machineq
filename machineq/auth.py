@@ -29,14 +29,12 @@ class AuthenticationException(Exception):
 @dataclass
 class MqAuth:
     client_id: str
-    client_secret: str
-    client: Client = field(default_factory=lambda: Client())
+    client_secret: str = field(repr=False)
+    client: Client = field(default_factory=lambda: Client(), repr=False)
     env: MqApiEnvironment = MqApiEnvironment.PROD
 
     expires_at: datetime = field(default_factory=lambda: datetime.now())
-    refresh_token: str = ""
-    id_token: str = ""
-    _token: str = ""
+    _token: str = field(default="", repr=False)
 
     def __post_init__(self):
         self.client.headers.update({"User-Agent": "MQAPI-py/1.0"})

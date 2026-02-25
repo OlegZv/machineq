@@ -7,6 +7,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+permissions:
+  contents: read
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -30,6 +33,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+      max-parallel: 1 # only one GW creation at a time.
       fail-fast: false
     defaults:
       run:
@@ -44,14 +48,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run tests
+        env:
+          MQ_CLIENT_ID: ${{ secrets.MQ_CLIENT_ID }}
+          MQ_CLIENT_SECRET: ${{ secrets.MQ_CLIENT_SECRET }}
         run: uv run python -m pytest tests --cov --cov-config=pyproject.toml --cov-report=xml
 
       - name: Check typing
         run: uv run ty check
 
 
-      - name: Upload coverage reports to Codecov with GitHub Action on Python 3.11
+      - name: Upload coverage reports to Codecov with GitHub Action on Python 3.14
         uses: codecov/codecov-action@v4
-        if: ${{ matrix.python-version == '3.11' }}
+        if: ${{ matrix.python-version == '3.14' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
