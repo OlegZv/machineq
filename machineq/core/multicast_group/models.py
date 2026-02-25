@@ -32,7 +32,7 @@ class DeleteMulticastGroupResponse(BaseModelWithConfig):
     response: bool
 
 
-class MulticastGroupNS(BaseModelWithConfig):
+class MulticastGroup(BaseModelWithConfig):
     name: str
     multicast_deveui: str
     multicast_dev_addr: str
@@ -43,11 +43,11 @@ class MulticastGroupNS(BaseModelWithConfig):
 
 
 class GetMulticastGroupResponse(BaseModelWithConfig):
-    multicast_group: MulticastGroupNS
+    multicast_group: MulticastGroup
 
 
 class GetMulticastGroupsResponse(BaseModelWithConfig):
-    multicast_groups: list[MulticastGroupNS]
+    multicast_groups: list[MulticastGroup]
 
 
 class AddDevicesWithMulticastGroupRequest(BaseModelWithConfig):

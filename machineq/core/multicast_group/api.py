@@ -16,7 +16,7 @@ from machineq.core.multicast_group.models import (
     GetGatewaysByMulticastGroupResponse,
     GetMulticastGroupResponse,
     GetMulticastGroupsResponse,
-    MulticastGroupNS,
+    MulticastGroup,
     RemoveDevicesFromMulticastGroupRequest,
     RemoveDevicesFromMulticastGroupResponse,
     RemoveGatewaysFromMulticastGroupRequest,
@@ -40,30 +40,30 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         self.base_url = client.base_url.replace("/v1", "/v0")
         self.base_path = "/multicastgroups"
 
-    def get_all(self) -> list[MulticastGroupNS]:
+    def get_all(self) -> list[MulticastGroup]:
         """List all multicast groups.
 
         Returns:
-            list[MulticastGroupNS]: List of all multicast group instances.
+            list[MulticastGroup]: List of all multicast group instances.
         """
         url = self._build_url()
         response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
         data = self._parse_response(response)
         return GetMulticastGroupsResponse(**data).multicast_groups
 
-    def get(self, multicast_deveui: str) -> MulticastGroupNS:
+    def get(self, multicast_deveui: str) -> MulticastGroup:
         """Retrieve a multicast group by its MulticastDevEUI.
 
         Args:
             multicast_deveui: The unique multicast device EUI.
 
         Returns:
-            MulticastGroupNS: The multicast group instance matching the given DevEUI.
+            MulticastGroup: The multicast group instance matching the given DevEUI.
         """
         url = self._build_url(f"{multicast_deveui}")
         response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
         data = self._parse_response(response)
-        return GetMulticastGroupResponse(**data)
+        return GetMulticastGroupResponse(**data).multicast_group
 
     def create(self, data: CreateMulticastGroupRequest) -> CreateMulticastGroupResponse:
         """Create a new multicast group.
@@ -239,30 +239,30 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         self.base_url = client.base_url.replace("/v1", "/v0")
         self.base_path = "/multicastgroups"
 
-    async def get_all(self) -> list[MulticastGroupNS]:
+    async def get_all(self) -> list[MulticastGroup]:
         """List all multicast groups.
 
         Returns:
-            list[MulticastGroupNS]: List of all multicast group instances.
+            list[MulticastGroup]: List of all multicast group instances.
         """
         url = self._build_url()
         response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
         data = self._parse_response(response)
         return GetMulticastGroupsResponse(**data).multicast_groups
 
-    async def get(self, multicast_deveui: str) -> MulticastGroupNS:
+    async def get(self, multicast_deveui: str) -> MulticastGroup:
         """Retrieve a multicast group by its MulticastDevEUI.
 
         Args:
             multicast_deveui: The unique multicast device EUI.
 
         Returns:
-            MulticastGroupNS: The multicast group instance matching the given DevEUI.
+            MulticastGroup: The multicast group instance matching the given DevEUI.
         """
         url = self._build_url(f"{multicast_deveui}")
         response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
         data = self._parse_response(response)
-        return GetMulticastGroupResponse(**data)
+        return GetMulticastGroupResponse(**data).multicast_group
 
     async def create(self, data: CreateMulticastGroupRequest) -> CreateMulticastGroupResponse:
         """Create a new multicast group.
