@@ -5,7 +5,7 @@ from os import getenv
 import pytest
 from dotenv import load_dotenv
 
-from machineq.client.sync import SyncClient
+from machineq.client import SyncClient
 
 # Load environment variables from .env file
 load_dotenv()

@@ -1,6 +1,6 @@
 [project]
 name = "machineq"
-version = "0.0.1"
+dynamic = ["version"]
 description = "Python package to access MachineQ APIs"
 authors = [{ name = "Oleg Zvonarov", email = "19969581+OlegZv@users.noreply.github.com" }]
 readme = "README.md"
@@ -41,12 +41,11 @@ dev = [
 ]
 
 [build-system]
-requires = ["uv_build>=0.10.4,<0.11.0"]
-build-backend = "uv_build"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-[tool.uv.build-backend]
-module-name = "machineq"
-module-root = ""
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
 [tool.ty.environment]
 python = "./.venv"

@@ -22,6 +22,7 @@ from machineq.core.role.api import AsyncRoles
 from machineq.core.service_profile.api import AsyncServiceProfiles
 from machineq.core.users.api import AsyncUsers
 from machineq.core.version.api import AsyncVersion
+from machineq.utils import __version__
 
 
 class AsyncClient:
@@ -31,7 +32,8 @@ class AsyncClient:
         self,
         client_id: str,
         client_secret: str,
-        base_url: str = "https://api.machineq.net/v1",
+        version: str = "v1",
+        extra_prefix: str = "",
         env: MqApiEnvironment = MqApiEnvironment.PROD,
     ):
         """Initialize async client.
@@ -48,8 +50,9 @@ class AsyncClient:
             client_secret=client_secret,
             env=env,
         )
-        self.base_url = base_url
-        self.http_client = httpx.AsyncClient()
+        self.api_version = version
+        self.extra_prefix = extra_prefix
+        self.http_client = httpx.AsyncClient(headers={"User-Agent": f"machineq-py/{__version__}"})
 
         # Initialize all resource attributes
         self.account = AsyncAccount(self)
