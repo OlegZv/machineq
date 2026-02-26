@@ -35,10 +35,11 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
 
     def __init__(self, client: SyncClient):
         # Note: multicast uses /v0, not /v1
-        self.client = client
-        self.auth = client.auth
-        self.base_url = client.base_url.replace("/v1", "/v0")
-        self.base_path = "/multicastgroups"
+        super().__init__(
+            client,
+            "/multicastgroups",
+            version="v0",
+        )
 
     def get_all(self) -> list[MulticastGroup]:
         """List all multicast groups.
@@ -236,7 +237,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
     def __init__(self, client: AsyncClient):
         self.client = client
         self.auth = client.auth
-        self.base_url = client.base_url.replace("/v1", "/v0")
+        self.version = "v0"
         self.base_path = "/multicastgroups"
 
     async def get_all(self) -> list[MulticastGroup]:

@@ -4,6 +4,8 @@ from enum import Enum
 
 from httpx import Client, Response
 
+from .utils import __version__
+
 GRACE_PERIOD_S = 5
 
 
@@ -37,7 +39,7 @@ class MqAuth:
     _token: str = field(default="", repr=False)
 
     def __post_init__(self):
-        self.client.headers.update({"User-Agent": "MQAPI-py/1.0"})
+        self.client.headers.update({"User-Agent": f"machineq-py/{__version__}"})
 
     @property
     def env_str(self):

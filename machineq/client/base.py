@@ -6,7 +6,9 @@ import json
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import httpx
+from pydantic import BaseModel
 
+from machineq import MqApiEnvironment
 from machineq.auth import MqAuth
 
 from .exceptions import parse_error_response
@@ -25,6 +27,7 @@ class BaseResource(Generic[ClientType]):
         self,
         client: ClientType,
         base_path: str,
+        version: str | None = None,
     ):
         """Initialize resource.
 
@@ -34,8 +37,20 @@ class BaseResource(Generic[ClientType]):
         """
         self.client: ClientType = client
         self.auth = client.auth
-        self.base_url = client.base_url
+        # if version is provided, use it; otherwise, inherit from client
+        if version is not None:
+            self.version = version
+        else:
+            self.version = client.version
+        self.extra_prefix = client.extra_prefix
+        self.env = client.auth.env
         self.base_path = base_path
+
+    @property
+    def base_url(self) -> str:
+        """Construct base URL for this resource."""
+        env = "" if self.env == MqApiEnvironment.PROD else f"{self.env}."
+        return f"https://api.{env}machineq.net/{self.version}{self.extra_prefix}"
 
     def _build_url(self, path: str = "") -> str:
         """Build full URL for a request.
@@ -117,7 +132,6 @@ class BaseResource(Generic[ClientType]):
         Returns:
             JSON string
         """
-        from pydantic import BaseModel
 
         # Handle Pydantic models: serialize with by_alias to use API PascalCase
         if isinstance(data, BaseModel):

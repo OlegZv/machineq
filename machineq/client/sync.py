@@ -22,6 +22,7 @@ from machineq.core.role.api import SyncRoles
 from machineq.core.service_profile.api import SyncServiceProfiles
 from machineq.core.users.api import SyncUsers
 from machineq.core.version.api import SyncVersion
+from machineq.utils import __version__
 
 
 class SyncClient:
@@ -31,7 +32,8 @@ class SyncClient:
         self,
         client_id: str,
         client_secret: str,
-        base_url: str = "https://api.machineq.net/v1",
+        version: str = "v1",
+        extra_prefix: str = "",
         env: MqApiEnvironment = MqApiEnvironment.PROD,
     ):
         """Initialize sync client.
@@ -43,7 +45,7 @@ class SyncClient:
             env: API environment (default: production)
         """
         # Create HTTP client for this sync client
-        http_client = httpx.Client()
+        http_client = httpx.Client(headers={"User-Agent": f"machineq-py/{__version__}"})
         # Create auth with the sync client
         self.auth = MqAuth(
             client_id=client_id,
@@ -51,7 +53,8 @@ class SyncClient:
             client=http_client,
             env=env,
         )
-        self.base_url = base_url
+        self.version = version
+        self.extra_prefix = extra_prefix
         self.http_client = http_client
 
         # Initialize all resource attributes
