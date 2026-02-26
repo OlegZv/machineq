@@ -50,7 +50,7 @@ class AsyncClient:
             client_secret=client_secret,
             env=env,
         )
-        self.version = version
+        self.api_version = version
         self.extra_prefix = extra_prefix
         self.http_client = httpx.AsyncClient(headers={"User-Agent": f"machineq-py/{__version__}"})
 

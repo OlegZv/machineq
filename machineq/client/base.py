@@ -41,7 +41,7 @@ class BaseResource(Generic[ClientType]):
         if version is not None:
             self.version = version
         else:
-            self.version = client.version
+            self.version = client.api_version
         self.extra_prefix = client.extra_prefix
         self.env = client.auth.env
         self.base_path = base_path

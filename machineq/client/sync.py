@@ -53,7 +53,7 @@ class SyncClient:
             client=http_client,
             env=env,
         )
-        self.version = version
+        self.api_version = version
         self.extra_prefix = extra_prefix
         self.http_client = http_client
 
