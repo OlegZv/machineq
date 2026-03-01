@@ -130,7 +130,13 @@ class TestOutputProfiles:
         finally:
             output_profiles_api.delete(profile_id)
 
-    def test_output_profiles_update_devices_put(self, output_profiles_api: SyncOutputProfiles, sync_client: SyncClient):
+    def test_output_profiles_update_devices_put(
+        self,
+        output_profiles_api: SyncOutputProfiles,
+        sync_client: SyncClient,
+        get_service_profile,
+        get_device_profile,
+    ):
         """Test update_devices (PUT) for output profiles to associate devices."""
         data = OutputProfileCreate(name=random_name())
         profile_id = output_profiles_api.create(data)
@@ -151,16 +157,12 @@ class TestOutputProfiles:
 
             deveui = random_deveui()
             deveui2 = random_deveui()
-            service_profiles = sync_client.service_profiles.get_all()
-            device_profiles = sync_client.device_profiles.get_all()
-            assert len(service_profiles) > 0
-            assert len(device_profiles) > 0
             new_device = DeviceCreate(
                 name=random_name(),
                 deveui=deveui,
                 activation_type=ActivationType.OTAA,
-                service_profile=service_profiles[0].id,
-                device_profile=device_profiles[0].id,
+                service_profile=get_service_profile(),
+                device_profile=get_device_profile(),
                 application_eui=deveui,
                 application_key=deveui * 2,
             )

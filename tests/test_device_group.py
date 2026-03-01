@@ -34,7 +34,12 @@ class TestDeviceGroups:
         finally:
             device_groups_api.delete(group_id)
 
-    def test_device_groups_update_and_patch(self, device_groups_api: SyncDeviceGroups):
+    def test_device_groups_update_and_patch(
+        self,
+        device_groups_api: SyncDeviceGroups,
+        get_service_profile,
+        get_device_profile,
+    ):
         """Test updating and patching a device group."""
         data = DeviceGroupCreate(name=random_name(), device_list=[])
         group_id = device_groups_api.create(data)
@@ -42,16 +47,14 @@ class TestDeviceGroups:
         try:
             # create new devices to associate to the group
             deveui = random_deveui()
-            service_profiles = device_groups_api.client.service_profiles.get_all()
-            device_profiles = device_groups_api.client.device_profiles.get_all()
-            assert len(service_profiles) > 0
-            assert len(device_profiles) > 0
+            service_profile = get_service_profile()
+            device_profile = get_device_profile()
             device_data = DeviceCreate(
                 name=deveui,
                 deveui=deveui,
                 activation_type=ActivationType.OTAA,
-                service_profile=service_profiles[0].id,
-                device_profile=device_profiles[0].id,
+                service_profile=service_profile,
+                device_profile=device_profile,
                 application_eui=deveui,
                 application_key=deveui * 2,
             )

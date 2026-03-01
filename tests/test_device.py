@@ -39,15 +39,15 @@ class TestDevices:
             result = devices_api.get(deveui)
             assert result.deveui == deveui
 
-    def test_create_and_delete(self, devices_api: SyncDevices):
+    def test_create_and_delete(self, devices_api: SyncDevices, get_service_profile, get_device_profile):
         """Test creating and deleting a device."""
         deveui = random_deveui()
         data = DeviceCreate(
             name=random_name(),
             deveui=deveui,
             activation_type=ActivationType.OTAA,
-            service_profile=self.get_service_profile(devices_api.client),
-            device_profile=self.get_device_profile(devices_api.client),
+            service_profile=get_service_profile(),
+            device_profile=get_device_profile(),
             application_eui=random_hex(16),
             application_key=random_hex(32),
         )
@@ -61,15 +61,15 @@ class TestDevices:
         finally:
             devices_api.delete(deveui)
 
-    def test_get_health(self, devices_api: SyncDevices):
+    def test_get_health(self, devices_api: SyncDevices, get_service_profile, get_device_profile):
         """Test getting device health. Create a device and check it appears in the offline list."""
         deveui = random_deveui()
         data = DeviceCreate(
             name=random_name(),
             deveui=deveui,
             activation_type=ActivationType.OTAA,
-            service_profile=self.get_service_profile(devices_api.client),
-            device_profile=self.get_device_profile(devices_api.client),
+            service_profile=get_service_profile(),
+            device_profile=get_device_profile(),
             application_eui=random_hex(16),
             application_key=random_hex(32),
         )
@@ -89,15 +89,15 @@ class TestDevices:
         devices_api.get_health_count()
         # for now just checking the response is returned and parsed
 
-    def test_devices_update_and_patch(self, devices_api: SyncDevices):
+    def test_devices_update_and_patch(self, devices_api: SyncDevices, get_service_profile, get_device_profile):
         """Test updating and patching a device by creating and then modifying it."""
         deveui = random_deveui()
         data = DeviceCreate(
             name=random_name(),
             deveui=deveui,
             activation_type=ActivationType.OTAA,
-            service_profile=self.get_service_profile(devices_api.client),
-            device_profile=self.get_device_profile(devices_api.client),
+            service_profile=get_service_profile(),
+            device_profile=get_device_profile(),
             application_eui=random_hex(16),
             application_key=random_hex(32),
         )
@@ -144,15 +144,3 @@ class TestDevices:
             devices_api.delete(created_deveui)
             if output_profile:
                 devices_api.client.output_profiles.delete(output_profile)
-
-    def get_service_profile(self, client: SyncClient) -> str:
-        """Test getting device service profile."""
-        profiles = client.service_profiles.get_all()
-        assert len(profiles) > 0
-        return profiles[0].id
-
-    def get_device_profile(self, client: SyncClient) -> str:
-        """Test getting device profile."""
-        profiles = client.device_profiles.get_all()
-        assert len(profiles) > 0
-        return profiles[0].id
