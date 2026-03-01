@@ -17,7 +17,6 @@ class DeviceProfileDevicesResponse(BaseModelWithConfig):
 
 
 class DeviceProfileDevicesUpdate(BaseModelWithConfig):
-    id: str
     devices: list[str] | None
 
 

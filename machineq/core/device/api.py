@@ -17,6 +17,7 @@ from machineq.core.device.models import (
     DevicesHealthResponse,
     DeviceUpdate,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -72,7 +73,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         result = self._parse_response(response)
         return DeviceCreateResponse(**result).id
 
-    def update(self, deveui: str, data: DeviceUpdate) -> DeviceInstance:
+    def update(self, deveui: str, data: DeviceUpdate) -> bool:
         """Update a device (full replacement).
 
         Args:
@@ -89,9 +90,9 @@ class SyncDevices(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, deveui: str, data: DevicePatch) -> DeviceInstance:
+    def patch(self, deveui: str, data: DevicePatch) -> bool:
         """Partially update a device.
 
         Args:
@@ -108,7 +109,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, deveui: str) -> None:
         """Delete a device.

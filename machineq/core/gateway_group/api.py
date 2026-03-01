@@ -13,6 +13,7 @@ from machineq.core.gateway_group.models import (
     GatewayGroupResponse,
     GatewayGroupUpdate,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -68,7 +69,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         result = self._parse_response(response)
         return GatewayGroupCreateResponse(**result).id
 
-    def update(self, group_id: str, data: GatewayGroupUpdate) -> GatewayGroupInstance:
+    def update(self, group_id: str, data: GatewayGroupUpdate) -> bool:
         """Update a gateway group (full replacement).
 
         Args:
@@ -85,9 +86,9 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, group_id: str, data: GatewayGroupPatch) -> GatewayGroupInstance:
+    def patch(self, group_id: str, data: GatewayGroupPatch) -> bool:
         """Partially update a gateway group.
 
         Args:
@@ -104,7 +105,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, group_id: str) -> None:
         """Delete a gateway group.

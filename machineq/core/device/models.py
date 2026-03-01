@@ -80,14 +80,13 @@ class DeviceMessage(BaseModelWithConfig):
 
 
 class DevicePatch(BaseModelWithConfig):
-    name: str
-    deveui: str
-    service_profile: str | None
-    device_profile: str | None
-    decoder_type: str | None
-    output_profile: str | None
-    private_data: bool | None
-    remove_output_profile: bool | None
+    name: str | None = None
+    service_profile: str | None = None
+    device_profile: str | None = None
+    decoder_type: str | None = None
+    output_profile: str | None = None
+    private_data: bool | None = None
+    remove_output_profile: bool | None = None
 
 
 class DevicePayload(BaseModelWithConfig):
@@ -106,7 +105,6 @@ class DeviceResponse(BaseModelWithConfig):
 
 class DeviceUpdate(BaseModelWithConfig):
     name: str
-    deveui: str
     service_profile: str
     device_profile: str
     decoder_type: str | None

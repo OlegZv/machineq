@@ -31,13 +31,12 @@ class RoleInstance(BaseModelWithConfig):
 
 
 class RolePatch(BaseModelWithConfig):
-    id: str
-    name: str | None
-    device: PermissionObject | None
-    user: PermissionObject | None
-    gateway: PermissionObject | None
-    users: list[str] | None
-    applications: list[str] | None
+    name: str | None = None
+    device: PermissionObject | None = None
+    user: PermissionObject | None = None
+    gateway: PermissionObject | None = None
+    users: list[str] | None = None
+    applications: list[str] | None = None
 
 
 class RoleResponse(BaseModelWithConfig):
@@ -45,8 +44,8 @@ class RoleResponse(BaseModelWithConfig):
 
 
 class RoleUpdate(BaseModelWithConfig):
-    id: str
     name: str
+    # note: None would mean do not update
     device: PermissionObject | None
     user: PermissionObject | None
     gateway: PermissionObject | None

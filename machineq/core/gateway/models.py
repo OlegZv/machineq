@@ -170,7 +170,12 @@ class GatewayCreate(BaseModelWithConfig):
     coordinates: Coordinates
     cellular_enabled: bool | None = None
     IMEI: str | None = None
-    ICCID: str | None = None
+    """IMEI for cellular backhaul. This field is optional if CellularEnabled is true.
+    <15 digit numbers, multiple entries separated by a comma> (eg. "123451234512345,123451234512345")."""
+    ICCID: str | None = Field(
+        default=None, serialization_alias="ICCID", validation_alias="ICCID", max_length=20, min_length=20
+    )
+    """ICCID for cellular backhaul. This field is optional if CellularEnabled is true. <20 digit number>."""
 
 
 class GatewayCreateResponse(BaseModelWithConfig):
@@ -182,21 +187,24 @@ class GatewayError(BaseModelWithConfig):
 
 
 class GatewayPatch(BaseModelWithConfig):
-    id: str
-    name: str | None
-    antenna_gain: str | None
-    location_type: LocationType | None
-    coordinates: Coordinates | None
-    gateway_profile: str | None
+    name: str | None = None
+    antenna_gain: str | None = None
+    location_type: LocationType | None = None
+    coordinates: Coordinates | None = None
+    gateway_profile: str | None = None
     gps_enabled: bool | None = Field(default=None, alias="GPSEnabled")
-    cellular_enabled: bool | None
+    cellular_enabled: bool | None = None
     IMEI: str | None = None
-    ICCID: str | None = None
-    rf_region: str | None
+    """IMEI for cellular backhaul. This field is optional if CellularEnabled is true.
+    <15 digit numbers, multiple entries separated by a comma> (eg. "123451234512345,123451234512345")."""
+    ICCID: str | None = Field(
+        default=None, serialization_alias="ICCID", validation_alias="ICCID", max_length=20, min_length=20
+    )
+    """ICCID for cellular backhaul. This field is optional if CellularEnabled is true. <20 digit number>."""
+    rf_region: str | None = None
 
 
 class GatewayUpdate(BaseModelWithConfig):
-    id: str
     name: str
     antenna_gain: str
     location_type: LocationType
@@ -205,7 +213,12 @@ class GatewayUpdate(BaseModelWithConfig):
     gps_enabled: bool | None = Field(default=None, alias="GPSEnabled")
     cellular_enabled: bool | None
     IMEI: str | None = None
-    ICCID: str | None = None
+    """IMEI for cellular backhaul. This field is optional if CellularEnabled is true.
+    <15 digit numbers, multiple entries separated by a comma> (eg. "123451234512345,123451234512345")."""
+    ICCID: str | None = Field(
+        default=None, serialization_alias="ICCID", validation_alias="ICCID", max_length=20, min_length=20
+    )
+    """ICCID for cellular backhaul. This field is optional if CellularEnabled is true. <20 digit number>."""
 
 
 class GatewayActivationInfo(BaseModelWithConfig):

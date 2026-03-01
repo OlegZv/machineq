@@ -13,6 +13,7 @@ from machineq.core.role.models import (
     RoleResponse,
     RoleUpdate,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -50,7 +51,7 @@ class SyncRoles(BaseResource["SyncClient"]):
         result = self._parse_response(response)
         return RoleCreateResponse(**result).id
 
-    def update(self, role_id: str, data: RoleUpdate) -> RoleInstance:
+    def update(self, role_id: str, data: RoleUpdate) -> bool:
         """Update role (full replacement)."""
         url = self._build_url(f"{role_id}")
         response = self.client.http_client.put(
@@ -59,9 +60,9 @@ class SyncRoles(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return RoleInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, role_id: str, data: RolePatch) -> RoleInstance:
+    def patch(self, role_id: str, data: RolePatch) -> bool:
         """Partially update role."""
         url = self._build_url(f"{role_id}")
         response = self.client.http_client.patch(
@@ -70,7 +71,7 @@ class SyncRoles(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return RoleInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, role_id: str) -> None:
         """Delete role."""

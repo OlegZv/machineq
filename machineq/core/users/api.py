@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
+from machineq.core.shared.models import CommonOKResponse
 from machineq.core.users.models import (
     UserCreate,
     UserCreateResponse,
@@ -68,7 +69,7 @@ class SyncUsers(BaseResource["SyncClient"]):
         result = self._parse_response(response)
         return UserCreateResponse(**result).id
 
-    def update(self, user_id: str, data: UserUpdate) -> UserInstance:
+    def update(self, user_id: str, data: UserUpdate) -> bool:
         """Update a user (full replacement).
 
         Args:
@@ -85,9 +86,9 @@ class SyncUsers(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return UserInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, user_id: str, data: UserPatch) -> UserInstance:
+    def patch(self, user_id: str, data: UserPatch) -> bool:
         """Partially update a user.
 
         Args:
@@ -104,7 +105,7 @@ class SyncUsers(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return UserInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, user_id: str) -> None:
         """Delete a user.

@@ -6,7 +6,7 @@ from sample_data.common import random_gateway_id, random_mac_address, random_nam
 from machineq.client.sync import SyncClient
 from machineq.core.gateway import Coordinates
 from machineq.core.gateway.api import SyncGateways
-from machineq.core.gateway.models import GatewayCreate
+from machineq.core.gateway.models import GatewayCreate, GatewayPatch, GatewayUpdate, LocationType
 
 
 @pytest.fixture
@@ -49,6 +49,62 @@ class TestGateways:
         try:
             gateway = gateways_api.get(created_id)
             assert gateway.id == created_id
+        finally:
+            gateways_api.delete(created_id)
+
+    def test_gateways_update_and_patch(self, gateways_api: SyncGateways):
+        """Test updating and patching a gateway by using the fetched instance to build update payload."""
+        gateway_id = random_gateway_id()
+        data = GatewayCreate(
+            node_id=gateway_id,
+            name=random_name(),
+            gateway_profile=self.get_gateway_profile(gateways_api.client),
+            mac_address=random_mac_address(),
+            coordinates=Coordinates(X="37.7749", Y="-122.4194"),
+        )
+
+        created_id = gateways_api.create(data)
+
+        try:
+            gateway = gateways_api.get(created_id)
+
+            update_data = GatewayUpdate(
+                name=random_name(),
+                antenna_gain="1",
+                location_type=LocationType.OUTDOOR,
+                coordinates=Coordinates(X="0", Y="0"),
+                gateway_profile=gateway.gateway_profile,
+                cellular_enabled=True,
+            )
+
+            updated = gateways_api.update(created_id, update_data)
+            assert updated
+            # check the updated gateway
+            fetched = gateways_api.get(created_id)
+            assert fetched.id == created_id
+            assert fetched.name == update_data.name
+            assert fetched.antenna_gain == update_data.antenna_gain
+            assert fetched.location_type == update_data.location_type
+            assert fetched.coordinates == update_data.coordinates
+            assert fetched.cellular_enabled == update_data.cellular_enabled
+
+            patch_data = GatewayPatch(
+                name=random_name(),
+                coordinates=Coordinates(X="1", Y="1"),
+            )
+            patched = gateways_api.patch(created_id, patch_data)
+
+            assert patched
+
+            fetched = gateways_api.get(created_id)
+            assert fetched.id == created_id
+            assert fetched.name == patch_data.name
+            assert fetched.coordinates == patch_data.coordinates
+            # the fields not included in the patch should remain unchanged from the update
+            assert fetched.antenna_gain == update_data.antenna_gain
+            assert fetched.location_type == update_data.location_type
+            assert fetched.cellular_enabled == update_data.cellular_enabled
+
         finally:
             gateways_api.delete(created_id)
 

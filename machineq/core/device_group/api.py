@@ -14,6 +14,7 @@ from machineq.core.device_group.models import (
     DeviceGroupUpdate,
     GetDeviceGroupRecentResponse,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -69,7 +70,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         result = self._parse_response(response)
         return DeviceGroupCreateResponse(**result).id
 
-    def update(self, group_id: str, data: DeviceGroupUpdate) -> DeviceGroupInstance:
+    def update(self, group_id: str, data: DeviceGroupUpdate) -> bool:
         """Update a device group (full replacement).
 
         Args:
@@ -86,9 +87,9 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, group_id: str, data: DeviceGroupPatch) -> DeviceGroupInstance:
+    def patch(self, group_id: str, data: DeviceGroupPatch) -> bool:
         """Partially update a device group.
 
         Args:
@@ -105,7 +106,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, group_id: str) -> None:
         """Delete a device group.

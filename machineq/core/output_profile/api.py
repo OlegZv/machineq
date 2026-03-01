@@ -8,7 +8,6 @@ from machineq.client.base import BaseResource
 from machineq.core.output_profile.models import (
     OutputProfileCreate,
     OutputProfileCreateResponse,
-    OutputProfileDevicesResponse,
     OutputProfileDevicesUpdate,
     OutputProfileDevicesUpdateResponse,
     OutputProfileInstance,
@@ -16,6 +15,7 @@ from machineq.core.output_profile.models import (
     OutputProfileResponse,
     OutputProfileUpdate,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -75,7 +75,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         self,
         profile_id: str,
         data: OutputProfileUpdate,
-    ) -> OutputProfileInstance:
+    ) -> bool:
         """Update an output profile (full replacement).
 
         Args:
@@ -92,13 +92,13 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return OutputProfileInstance(**result)
+        return CommonOKResponse(**result).response
 
     def patch(
         self,
         profile_id: str,
         data: OutputProfilePatch,
-    ) -> OutputProfileInstance:
+    ) -> bool:
         """Partially update an output profile.
 
         Args:
@@ -115,7 +115,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
             headers=self._build_headers(self.auth),
         )
         result = self._parse_response(response)
-        return OutputProfileInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, profile_id: str) -> None:
         """Delete an output profile.
@@ -129,20 +129,6 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         url = self._build_url(f"{profile_id}")
         response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
         self._parse_response(response)
-
-    def get_devices(self, profile_id: str):
-        """Retrieve devices associated with an output profile.
-
-        Args:
-            profile_id: The unique identifier of the output profile.
-
-        Returns:
-            OutputProfileDevicesResponse: Devices associated with the output profile.
-        """
-        url = self._build_url(f"{profile_id}/devices")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
-        return OutputProfileDevicesResponse(**data)
 
     def update_devices(
         self,
@@ -160,6 +146,29 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         """
         url = self._build_url(f"{profile_id}/devices")
         response = self.client.http_client.put(
+            url,
+            content=self._serialize_request_data(data),
+            headers=self._build_headers(self.auth),
+        )
+        result = self._parse_response(response)
+        return OutputProfileDevicesUpdateResponse(**result)
+
+    def add_devices(
+        self,
+        profile_id: str,
+        data: OutputProfileDevicesUpdate,
+    ) -> OutputProfileDevicesUpdateResponse:
+        """Add devices to an output profile.
+
+        Args:
+            profile_id: The unique identifier of the output profile.
+            data: The device association update data.
+
+        Returns:
+            OutputProfileDevicesUpdateResponse: The response containing updated device associations.
+        """
+        url = self._build_url(f"{profile_id}/devices")
+        response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
             headers=self._build_headers(self.auth),
@@ -276,20 +285,6 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
         self._parse_response(response)
 
-    async def get_devices(self, profile_id: str):
-        """Retrieve devices associated with an output profile.
-
-        Args:
-            profile_id: The unique identifier of the output profile.
-
-        Returns:
-            OutputProfileDevicesResponse: Devices associated with the output profile.
-        """
-        url = self._build_url(f"{profile_id}/devices")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
-        return OutputProfileDevicesResponse(**data)
-
     async def update_devices(
         self,
         profile_id: str,
@@ -306,6 +301,29 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         """
         url = self._build_url(f"{profile_id}/devices")
         response = await self.client.http_client.put(
+            url,
+            content=self._serialize_request_data(data),
+            headers=self._build_headers(self.auth),
+        )
+        result = self._parse_response(response)
+        return OutputProfileDevicesUpdateResponse(**result)
+
+    async def add_devices(
+        self,
+        profile_id: str,
+        data: OutputProfileDevicesUpdate,
+    ) -> OutputProfileDevicesUpdateResponse:
+        """Add devices to an output profile.
+
+        Args:
+            profile_id: The unique identifier of the output profile.
+            data: The device association update data.
+
+        Returns:
+            OutputProfileDevicesUpdateResponse: The response containing updated device associations.
+        """
+        url = self._build_url(f"{profile_id}/devices")
+        response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
             headers=self._build_headers(self.auth),
