@@ -64,7 +64,7 @@ class SyncAccount(BaseResource["SyncClient"]):
         result = self._parse_response(response)
         return AccountResponse(**result)
 
-    def update_user_info(self, data: UserInfoUpdate) -> bool:
+    def update_user_info(self, data: UserInfoUpdate) -> AccountResponse:
         """Update the current user's full information.
 
         Args:
@@ -147,7 +147,7 @@ class AsyncAccount(BaseResource["AsyncClient"]):
         result = self._parse_response(response)
         return AccountResponse(**result)
 
-    async def update_user_info(self, data: UserInfoUpdate) -> bool:
+    async def update_user_info(self, data: UserInfoUpdate) -> AccountResponse:
         """Update the current user's full information.
 
         Args:
