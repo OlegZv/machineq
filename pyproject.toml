@@ -30,12 +30,12 @@ Documentation = "https://github.com/OlegZv/machineq"
 [dependency-groups]
 dev = [
     "pytest==9.0.2",
-    "tox-uv==1.29.0",
+    "tox-uv==1.31.0",
     "deptry==0.24.0",
-    "ty==0.0.18",
+    "ty==0.0.19",
     "pytest-cov==7.0.0",
-    "ruff==0.15.2",
-    "prek==0.3.3",
+    "ruff==0.15.4",
+    "prek==0.3.4",
     "ipykernel==7.2.0",
     "python-dotenv==1.2.1",
 ]
