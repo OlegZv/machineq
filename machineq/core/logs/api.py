@@ -99,7 +99,7 @@ class SyncLogs(BaseResource["SyncClient"]):
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return LogResponse(**data).logs
@@ -114,21 +114,21 @@ class AsyncLogs(BaseResource["AsyncClient"]):
     # ruff: noqa: C901
     async def get_all(
         self,
-        device_eui: str | None = None,
+        deveui: str | None = None,
         gateway_id: str | None = None,
-        start_time: str | None = None,
-        end_time: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
         page: int | None = None,
-        stream: str | None = None,
-        message_type: str | None = None,
-        late: str | None = None,
-        activation: str | None = None,
-        ack: str | None = None,
-    ) -> LogResponse:
+        stream: StreamFilter | None = None,
+        message_type: MessageTypeFilter | None = None,
+        late: LateFilter | None = None,
+        activation: ActivationFilter | None = None,
+        ack: AckFilter | None = None,
+    ) -> list[LogInstance]:
         """List logs with optional filtering.
 
         Args:
-            device_eui: Optional device EUI to filter by.
+            deveui: Optional device EUI to filter by.
             gateway_id: Optional gateway ID to filter by.
             start_time: Optional ISO 8601 formatted start time.
             end_time: Optional ISO 8601 formatted end time.
@@ -140,18 +140,18 @@ class AsyncLogs(BaseResource["AsyncClient"]):
             ack: Optional acknowledgment flag filter.
 
         Returns:
-            LogResponse: Filtered logs matching the specified criteria.
+            list[LogInstance]: Filtered logs matching the specified criteria.
         """
         url = self._build_url()
         params = {}
-        if device_eui:
-            params["DevEUI"] = device_eui
+        if deveui:
+            params["DevEUI"] = deveui
         if gateway_id:
             params["GatewayID"] = gateway_id
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
+            params["EndTime"] = ensure_utc_and_str(end_time)
         if page is not None:
             params["Page"] = page
         if stream:
@@ -168,7 +168,7 @@ class AsyncLogs(BaseResource["AsyncClient"]):
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return LogResponse(**data)
+        return LogResponse(**data).logs

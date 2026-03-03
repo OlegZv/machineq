@@ -28,7 +28,7 @@ class SyncGatewayProfiles(BaseResource["SyncClient"]):
             list[GatewayProfileInstance]: List of all gateway profile instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayProfileResponse(**data).gateway_profiles
 
@@ -46,6 +46,6 @@ class AsyncGatewayProfiles(BaseResource["AsyncClient"]):
             list[GatewayProfileInstance]: List of all gateway profile instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayProfileResponse(**data).gateway_profiles

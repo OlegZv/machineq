@@ -33,7 +33,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             list[GatewayGroupInstance]: List of all gateway group instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayGroupResponse(**data).gateway_groups
 
@@ -47,7 +47,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             GatewayGroupInstance: The gateway group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayGroupInstance(**data)
 
@@ -64,7 +64,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return GatewayGroupCreateResponse(**result).id
@@ -83,7 +83,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -102,7 +102,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -117,7 +117,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
 
@@ -134,7 +134,7 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             list[GatewayGroupInstance]: List of all gateway group instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayGroupResponse(**data).gateway_groups
 
@@ -148,7 +148,7 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             GatewayGroupInstance: The gateway group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayGroupInstance(**data)
 
@@ -165,12 +165,12 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return GatewayGroupCreateResponse(**result).id
 
-    async def update(self, group_id: str, data: GatewayGroupUpdate) -> GatewayGroupInstance:
+    async def update(self, group_id: str, data: GatewayGroupUpdate) -> bool:
         """Update a gateway group (full replacement).
 
         Args:
@@ -178,18 +178,18 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             data: The complete gateway group data for replacement.
 
         Returns:
-            GatewayGroupInstance: The updated gateway group instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, group_id: str, data: GatewayGroupPatch) -> GatewayGroupInstance:
+    async def patch(self, group_id: str, data: GatewayGroupPatch) -> bool:
         """Partially update a gateway group.
 
         Args:
@@ -197,16 +197,16 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             data: The partial gateway group data to update.
 
         Returns:
-            GatewayGroupInstance: The updated gateway group instance.
+            bool: True if the patch was successful, False otherwise.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, group_id: str) -> None:
         """Delete a gateway group.
@@ -218,5 +218,5 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)

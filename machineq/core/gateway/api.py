@@ -38,7 +38,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             list[GatewayInstance]: List of all gateway instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return MachineqapiGatewayResponse(**data).gateways
 
@@ -52,7 +52,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             GatewayInstance: The gateway instance matching the given ID.
         """
         url = self._build_url(f"{gateway_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayInstance(**data)
 
@@ -69,7 +69,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return GatewayCreateResponse(**result).id
@@ -88,7 +88,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -107,7 +107,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -122,7 +122,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{gateway_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     def get_devices(
@@ -147,7 +147,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return GatewayDeviceResponse(**data)
@@ -162,7 +162,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             GatewayStatistics: Statistics for the gateway.
         """
         url = self._build_url(f"{gateway_id}/statistics")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayStatistics(**data)
 
@@ -192,7 +192,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return MachineqapiGetGatewayEventsResponse(**data)
@@ -204,7 +204,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             GatewaysConnectionResponse: Gateways grouped by their connection status.
         """
         url = self._build_url("connection")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewaysConnectionResponse(**data)
 
@@ -215,7 +215,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             GatewaysHealthResponse: Gateways grouped by their health status.
         """
         url = self._build_url("health")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewaysHealthResponse(**data)
 
@@ -233,7 +233,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             list[GatewayInstance]: List of all gateway instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return MachineqapiGatewayResponse(**data).gateways
 
@@ -247,7 +247,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             GatewayInstance: The gateway instance matching the given ID.
         """
         url = self._build_url(f"{gateway_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayInstance(**data)
 
@@ -264,12 +264,12 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return GatewayCreateResponse(**result).id
 
-    async def update(self, gateway_id: str, data: GatewayUpdate) -> GatewayInstance:
+    async def update(self, gateway_id: str, data: GatewayUpdate) -> bool:
         """Update a gateway (full replacement).
 
         Args:
@@ -277,18 +277,18 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             data: The complete gateway data for replacement.
 
         Returns:
-            GatewayInstance: The updated gateway instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{gateway_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, gateway_id: str, data: GatewayPatch) -> GatewayInstance:
+    async def patch(self, gateway_id: str, data: GatewayPatch) -> bool:
         """Partially update a gateway.
 
         Args:
@@ -296,16 +296,16 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             data: The partial gateway data to update.
 
         Returns:
-            GatewayInstance: The updated gateway instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{gateway_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, gateway_id: str) -> None:
         """Delete a gateway.
@@ -317,7 +317,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{gateway_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     async def get_devices(
@@ -342,7 +342,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return GatewayDeviceResponse(**data)
@@ -357,7 +357,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             GatewayStatistics: Statistics for the gateway.
         """
         url = self._build_url(f"{gateway_id}/statistics")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayStatistics(**data)
 
@@ -387,7 +387,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return MachineqapiGetGatewayEventsResponse(**data)
@@ -399,7 +399,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             GatewaysConnectionResponse: Gateways grouped by their connection status.
         """
         url = self._build_url("connection")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewaysConnectionResponse(**data)
 
@@ -410,6 +410,6 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             GatewaysHealthResponse: Gateways grouped by their health status.
         """
         url = self._build_url("health")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewaysHealthResponse(**data)

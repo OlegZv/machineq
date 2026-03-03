@@ -3,18 +3,17 @@
 import pytest
 from sample_data.common import random_email, random_name, random_password
 
-from machineq.client.sync import SyncClient
 from machineq.core.account import PermissionObject
 from machineq.core.application import ApplicationCreate
-from machineq.core.role.api import SyncRoles
+from machineq.core.role.api import AsyncRoles, SyncRoles
 from machineq.core.role.models import RoleCreate, RolePatch, RoleUpdate
 from machineq.core.users import UserCreate
 
 
 @pytest.fixture
-def roles_api(sync_client: SyncClient) -> SyncRoles:
-    """Get roles API resource."""
-    return sync_client.roles
+def roles_api(client) -> SyncRoles | AsyncRoles:
+    """Get roles API resource from whichever client was requested."""
+    return client.roles
 
 
 def verify_permissions(
@@ -34,36 +33,37 @@ def verify_permissions(
     assert permissions.delete == delete
 
 
+@pytest.mark.asyncio
 class TestRoles:
     """Role API tests."""
 
-    def test_get_all(self, roles_api: SyncRoles):
+    async def test_get_all(self, roles_api):
         """Test listing all roles."""
-        result = roles_api.get_all()
+        result = await roles_api.get_all()
         assert len(result) > 0
 
-    def test_create_and_delete(self, roles_api: SyncRoles):
+    async def test_create_and_delete(self, roles_api):
         """Test creating and deleting a role."""
         data = RoleCreate(name=random_name())
-        role_id = roles_api.create(data)
+        role_id = await roles_api.create(data)
 
         try:
-            role = roles_api.get(role_id)
+            role = await roles_api.get(role_id)
             assert role.id == role_id
             # verify all permissions are false by default
             for perm in [role.device, role.user, role.gateway]:
                 verify_permissions(perm)
         finally:
-            roles_api.delete(role_id)
+            await roles_api.delete(role_id)
 
-    def test_role_update_and_patch(self, roles_api: SyncRoles):
+    async def test_role_update_and_patch(self, roles_api):
         """Test updating and patching a role."""
         # all permissions are off
         data = RoleCreate(name=random_name())
-        role_id = roles_api.create(data)
+        role_id = await roles_api.create(data)
 
         try:
-            role = roles_api.get(role_id)
+            role = await roles_api.get(role_id)
             update_name = random_name()
             update_data = RoleUpdate(
                 name=update_name,
@@ -74,11 +74,11 @@ class TestRoles:
                 applications=role.applications,
             )
 
-            updated = roles_api.update(role_id, update_data)
+            updated = await roles_api.update(role_id, update_data)
             assert updated
 
             # verify the update via get
-            fetched = roles_api.get(role_id)
+            fetched = await roles_api.get(role_id)
             assert fetched.id == role_id
             assert fetched.name == update_name
             verify_permissions(fetched.device, read=True, create=False, update=False, delete=False)
@@ -95,10 +95,10 @@ class TestRoles:
             for field, value in field_patchs.items():
                 patch_data = RolePatch()
                 setattr(patch_data, field, value)
-                patched = roles_api.patch(role_id, patch_data)
+                patched = await roles_api.patch(role_id, patch_data)
                 assert patched
 
-                fetched = roles_api.get(role_id)
+                fetched = await roles_api.get(role_id)
                 assert fetched.id == role_id
                 result_field = getattr(fetched, field)
                 if isinstance(value, PermissionObject):
@@ -107,9 +107,9 @@ class TestRoles:
                     assert result_field == value
 
         finally:
-            roles_api.delete(role_id)
+            await roles_api.delete(role_id)
 
-    def test_create_update_patch_user_app(self, sync_client: SyncClient):
+    async def test_create_update_patch_user_app(self, client):
         """This test checks that we can create a role, assign it to a user (at create),
         reassign to the app only (update), then assign to both (patch)"""
         role = None
@@ -118,7 +118,7 @@ class TestRoles:
 
         try:
             # create a user
-            users_api = sync_client.users
+            users_api = client.users
             user_data = UserCreate(
                 email=random_email(),
                 username=random_name(),
@@ -127,17 +127,17 @@ class TestRoles:
                 password=random_password(),
                 phone_number="123-456-7890",
             )
-            user_id = users_api.create(user_data)
+            user_id = await users_api.create(user_data)
             # create an app
-            app_api = sync_client.applications
+            app_api = client.applications
             app_data = ApplicationCreate(name=random_name(), roles=[])
-            app_id = app_api.create(app_data).id
+            app_id = (await app_api.create(app_data)).id
 
             # create role with user assignment
             data = RoleCreate(name=random_name(), user=PermissionObject(read=True), users=[user_id])
-            role_id = sync_client.roles.create(data)
+            role_id = await client.roles.create(data)
 
-            role = sync_client.roles.get(role_id)
+            role = await client.roles.get(role_id)
             assert role.id == role_id
             verify_permissions(role.user, read=True)
             verify_permissions(role.device)
@@ -145,7 +145,7 @@ class TestRoles:
             assert role.users == [user_id]
 
             # check that the user has the role permissions
-            user = users_api.get(user_id)
+            user = await users_api.get(user_id)
             assert user.id == user_id
             assert user.roles == [role_id]
 
@@ -159,33 +159,33 @@ class TestRoles:
                 users=[""],
                 applications=[app_id],
             )
-            updated = sync_client.roles.update(role_id, update_data)
+            updated = await client.roles.update(role_id, update_data)
             assert updated
 
-            role = sync_client.roles.get(role_id)
+            role = await client.roles.get(role_id)
             assert role.id == role_id
             assert role.user is None
             assert role.users == [""]
             assert role.applications == [app_id]
             # the app should have the role
-            app = app_api.get(app_id)
+            app = await app_api.get(app_id)
             assert app.id == app_id
             assert app.roles == [role_id]
 
             # patch to both user and app
             patch_data = RolePatch(user=PermissionObject(read=True), users=[user_id], applications=[app_id])
-            patched = sync_client.roles.patch(role_id, patch_data)
+            patched = await client.roles.patch(role_id, patch_data)
             assert patched
 
-            role = sync_client.roles.get(role_id)
+            role = await client.roles.get(role_id)
             assert role.id == role_id
             assert role.user is not None
             assert role.users == [user_id]
             assert role.applications == [app_id]
         finally:
             if role is not None:
-                sync_client.roles.delete(role.id)
+                await client.roles.delete(role.id)
             if user_id:
-                sync_client.users.delete(user_id)
+                await client.users.delete(user_id)
             if app_id:
-                sync_client.applications.delete(app_id)
+                await client.applications.delete(app_id)

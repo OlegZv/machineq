@@ -2,20 +2,20 @@
 
 import pytest
 
-from machineq.client.sync import SyncClient
-from machineq.core.gateway_profile.api import SyncGatewayProfiles
+from machineq.core.gateway_profile.api import AsyncGatewayProfiles, SyncGatewayProfiles
 
 
 @pytest.fixture
-def gateway_profiles_api(sync_client: SyncClient) -> SyncGatewayProfiles:
+def gateway_profiles_api(client) -> SyncGatewayProfiles | AsyncGatewayProfiles:
     """Get gateway profiles API resource."""
-    return sync_client.gateway_profiles
+    return client.gateway_profiles
 
 
+@pytest.mark.asyncio
 class TestGatewayProfiles:
     """Gateway Profile API tests."""
 
-    def test_get_all(self, gateway_profiles_api: SyncGatewayProfiles):
+    async def test_get_all(self, gateway_profiles_api):
         """Test listing all gateway profiles."""
-        result = gateway_profiles_api.get_all()
+        result = await gateway_profiles_api.get_all()
         assert len(result) > 0

@@ -35,7 +35,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
             list[OutputProfileInstance]: List of all output profile instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return OutputProfileResponse(**data).output_profiles
 
@@ -49,7 +49,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
             OutputProfileInstance: The output profile instance matching the given ID.
         """
         url = self._build_url(f"{profile_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return OutputProfileInstance(**data)
 
@@ -66,7 +66,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return OutputProfileCreateResponse(**result).id
@@ -89,7 +89,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -112,7 +112,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -127,7 +127,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{profile_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     def update_devices(
@@ -148,7 +148,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return OutputProfileDevicesUpdateResponse(**result)
@@ -171,7 +171,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return OutputProfileDevicesUpdateResponse(**result)
@@ -190,7 +190,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
             list[OutputProfileInstance]: List of all output profile instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return OutputProfileResponse(**data).output_profiles
 
@@ -204,7 +204,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
             OutputProfileInstance: The output profile instance matching the given ID.
         """
         url = self._build_url(f"{profile_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return OutputProfileInstance(**data)
 
@@ -221,7 +221,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return OutputProfileCreateResponse(**result).id
@@ -230,7 +230,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         self,
         profile_id: str,
         data: OutputProfileUpdate,
-    ) -> OutputProfileInstance:
+    ) -> bool:
         """Update an output profile (full replacement).
 
         Args:
@@ -238,22 +238,22 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
             data: The complete output profile data for replacement.
 
         Returns:
-            OutputProfileInstance: The updated output profile instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{profile_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return OutputProfileInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def patch(
         self,
         profile_id: str,
         data: OutputProfilePatch,
-    ) -> OutputProfileInstance:
+    ) -> bool:
         """Partially update an output profile.
 
         Args:
@@ -261,16 +261,16 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
             data: The partial output profile data to update.
 
         Returns:
-            OutputProfileInstance: The updated output profile instance.
+            bool: True if the patch was successful, False otherwise.
         """
         url = self._build_url(f"{profile_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return OutputProfileInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, profile_id: str) -> None:
         """Delete an output profile.
@@ -282,7 +282,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{profile_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     async def update_devices(
@@ -303,7 +303,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return OutputProfileDevicesUpdateResponse(**result)
@@ -326,7 +326,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return OutputProfileDevicesUpdateResponse(**result)

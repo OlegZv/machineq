@@ -28,7 +28,7 @@ class SyncRFRegions(BaseResource["SyncClient"]):
             list[RFRegionInstance]: List of all RF region instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return ListRFRegionsResponse(**data).rf_regions
 
@@ -46,6 +46,6 @@ class AsyncRFRegions(BaseResource["AsyncClient"]):
             list[RFRegionInstance]: List of all RF region instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return ListRFRegionsResponse(**data).rf_regions

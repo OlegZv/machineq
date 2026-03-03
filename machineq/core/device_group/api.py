@@ -34,7 +34,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             list[DeviceGroupInstance]: List of all device group instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceGroupResponse(**data).device_groups
 
@@ -48,7 +48,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             DeviceGroupInstance: The device group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceGroupInstance(**data)
 
@@ -65,7 +65,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceGroupCreateResponse(**result).id
@@ -84,7 +84,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -103,7 +103,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -118,7 +118,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     def get_recent(
@@ -151,7 +151,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return GetDeviceGroupRecentResponse(**data)
@@ -170,7 +170,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             list[DeviceGroupInstance]: List of all device group instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceGroupResponse(**data).device_groups
 
@@ -184,7 +184,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             DeviceGroupInstance: The device group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceGroupInstance(**data)
 
@@ -201,12 +201,12 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceGroupCreateResponse(**result).id
 
-    async def update(self, group_id: str, data: DeviceGroupUpdate) -> DeviceGroupInstance:
+    async def update(self, group_id: str, data: DeviceGroupUpdate) -> bool:
         """Update a device group (full replacement).
 
         Args:
@@ -214,18 +214,18 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             data: The complete device group data for replacement.
 
         Returns:
-            DeviceGroupInstance: The updated device group instance.
+            bool: True if the update was successful.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, group_id: str, data: DeviceGroupPatch) -> DeviceGroupInstance:
+    async def patch(self, group_id: str, data: DeviceGroupPatch) -> bool:
         """Partially update a device group.
 
         Args:
@@ -233,16 +233,16 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             data: The partial device group data to update.
 
         Returns:
-            DeviceGroupInstance: The updated device group instance.
+            bool: True if the patch was successful.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, group_id: str) -> None:
         """Delete a device group.
@@ -254,7 +254,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     async def get_recent(
@@ -287,7 +287,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return GetDeviceGroupRecentResponse(**data)

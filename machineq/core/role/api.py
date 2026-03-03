@@ -29,14 +29,14 @@ class SyncRoles(BaseResource["SyncClient"]):
     def get_all(self) -> list[RoleInstance]:
         """List all roles."""
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return RoleResponse(**data).roles
 
     def get(self, role_id: str) -> RoleInstance:
         """Get role by ID."""
         url = self._build_url(f"{role_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return RoleInstance(**data)
 
@@ -46,7 +46,7 @@ class SyncRoles(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return RoleCreateResponse(**result).id
@@ -57,7 +57,7 @@ class SyncRoles(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -68,7 +68,7 @@ class SyncRoles(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -76,7 +76,7 @@ class SyncRoles(BaseResource["SyncClient"]):
     def delete(self, role_id: str) -> None:
         """Delete role."""
         url = self._build_url(f"{role_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
 
@@ -89,52 +89,84 @@ class AsyncRoles(BaseResource["AsyncClient"]):
     async def get_all(self) -> list[RoleInstance]:
         """List all roles."""
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return RoleResponse(**data).roles
 
     async def get(self, role_id: str) -> RoleInstance:
-        """Get role by ID."""
+        """Get role by ID.
+
+        Args:
+            role_id: The unique identifier of the role to retrieve.
+
+        Returns: The role instance corresponding to the provided ID.
+        """
         url = self._build_url(f"{role_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return RoleInstance(**data)
 
     async def create(self, data: RoleCreate) -> str:
-        """Create a new role."""
+        """Create a new role.
+
+        Args:
+            data: The role creation data.
+        Returns: The ID of the created role.
+        """
         url = self._build_url()
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return RoleCreateResponse(**result).id
 
-    async def update(self, role_id: str, data: RoleUpdate) -> RoleInstance:
-        """Update role (full replacement)."""
+    async def update(self, role_id: str, data: RoleUpdate) -> bool:
+        """Fully update a role.
+
+        Args:
+            role_id (str): The unique identifier of the role to update.
+            data (RoleUpdate): The complete role data for replacement.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
         url = self._build_url(f"{role_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return RoleInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, role_id: str, data: RolePatch) -> RoleInstance:
-        """Partially update role."""
+    async def patch(self, role_id: str, data: RolePatch) -> bool:
+        """
+        Partially update a role.
+
+        Args:
+            role_id (str): The unique identifier of the role to patch.
+            data (RolePatch): The partial role data to update.
+
+        Returns:
+            bool: True if the patch was successful, False otherwise.
+        """
         url = self._build_url(f"{role_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return RoleInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, role_id: str) -> None:
-        """Delete role."""
+        """Delete role by ID.
+
+        Args:
+            role_id (str): The unique identifier of the role to delete.
+        """
         url = self._build_url(f"{role_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)

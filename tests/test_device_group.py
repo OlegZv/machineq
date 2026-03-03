@@ -3,46 +3,49 @@
 import pytest
 from sample_data.common import random_deveui, random_name
 
-from machineq.client.sync import SyncClient
 from machineq.core.device import DeviceCreate
 from machineq.core.device.models import ActivationType
-from machineq.core.device_group.api import SyncDeviceGroups
+from machineq.core.device_group.api import AsyncDeviceGroups, SyncDeviceGroups
 from machineq.core.device_group.models import DeviceGroupCreate, DeviceGroupPatch, DeviceGroupUpdate
 
 
 @pytest.fixture
-def device_groups_api(sync_client: SyncClient) -> SyncDeviceGroups:
+def device_groups_api(client) -> SyncDeviceGroups | AsyncDeviceGroups:
     """Get device groups API resource."""
-    return sync_client.device_groups
+    return client.device_groups
 
 
+@pytest.mark.asyncio
 class TestDeviceGroups:
     """Device Group API tests."""
 
-    def test_get_all(self, device_groups_api: SyncDeviceGroups):
+    async def test_get_all(self, device_groups_api):
         """Test listing all device groups."""
-        device_groups_api.get_all()
+        _groups = await device_groups_api.get_all()
 
-    def test_create_and_delete(self, device_groups_api: SyncDeviceGroups):
+    async def test_create_and_delete(self, device_groups_api):
         """Test creating and deleting a device group."""
         data = DeviceGroupCreate(name=random_name(), device_list=[])
-        group_id = device_groups_api.create(data)
+        group_id = await device_groups_api.create(data)
 
         try:
-            group = device_groups_api.get(group_id)
+            group = await device_groups_api.get(group_id)
             assert group.id == group_id
+            # get all should contain the created group too
+            all_groups = await device_groups_api.get_all()
+            assert any(g.id == group_id for g in all_groups)
         finally:
-            device_groups_api.delete(group_id)
+            await device_groups_api.delete(group_id)
 
-    def test_device_groups_update_and_patch(
+    async def test_device_groups_update_and_patch(
         self,
-        device_groups_api: SyncDeviceGroups,
+        device_groups_api,
         get_service_profile,
         get_device_profile,
     ):
         """Test updating and patching a device group."""
         data = DeviceGroupCreate(name=random_name(), device_list=[])
-        group_id = device_groups_api.create(data)
+        group_id = await device_groups_api.create(data)
         device_id = ""
         try:
             # create new devices to associate to the group
@@ -58,15 +61,15 @@ class TestDeviceGroups:
                 application_eui=deveui,
                 application_key=deveui * 2,
             )
-            device_id = device_groups_api.client.devices.create(device_data)
+            device_id = await device_groups_api.client.devices.create(device_data)
             assert device_id
 
             update_data = DeviceGroupUpdate(name=random_name(), device_list=[device_id])
-            updated = device_groups_api.update(group_id, update_data)
+            updated = await device_groups_api.update(group_id, update_data)
             assert updated
 
             # verify
-            fetched = device_groups_api.get(group_id)
+            fetched = await device_groups_api.get(group_id)
             assert fetched.id == group_id
             assert fetched.name == update_data.name
             assert fetched.device_list == [device_id]
@@ -75,17 +78,17 @@ class TestDeviceGroups:
 
             # for the patch just remove the devices, and keep the name unchanged
             patch_data = DeviceGroupPatch(device_list=[""])
-            patched = device_groups_api.patch(group_id, patch_data)
+            patched = await device_groups_api.patch(group_id, patch_data)
 
             assert patched
 
-            fetched = device_groups_api.get(group_id)
+            fetched = await device_groups_api.get(group_id)
             assert fetched.id == group_id
             assert fetched.name == update_data.name
             assert fetched.device_list == [""]
             assert fetched.devices == []
 
         finally:
-            device_groups_api.delete(group_id)
+            await device_groups_api.delete(group_id)
             if device_id:
-                device_groups_api.client.devices.delete(device_id)
+                await device_groups_api.client.devices.delete(device_id)

@@ -37,7 +37,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             list[DeviceInstance]: List of all device instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceResponse(**data).devices
 
@@ -51,7 +51,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             DeviceInstance: The device instance matching the given DevEUI.
         """
         url = self._build_url(f"{deveui}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceInstance(**data)
 
@@ -68,7 +68,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceCreateResponse(**result).id
@@ -87,7 +87,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -106,7 +106,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -121,7 +121,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{deveui}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     def send_message(self, deveui: str, data: DeviceMessage) -> None:
@@ -138,7 +138,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         self._parse_response(response)
 
@@ -168,7 +168,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return DevicePayloadResponse(**data)
@@ -180,7 +180,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             DevicesHealthResponse: Devices grouped by their health status.
         """
         url = self._build_url("health")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthResponse(**data)
 
@@ -191,7 +191,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             DevicesHealthCountResponse: Device counts grouped by health status.
         """
         url = self._build_url("healthcount")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthCountResponse(**data)
 
@@ -202,16 +202,16 @@ class AsyncDevices(BaseResource["AsyncClient"]):
     def __init__(self, client: AsyncClient):
         super().__init__(client, "/devices")
 
-    async def get_all(self):
+    async def get_all(self) -> list[DeviceInstance]:
         """List all devices.
 
         Returns:
-            DeviceResponse: All device instances with response metadata.
+            list[DeviceInstance]: All device instances with response metadata.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
-        return DeviceResponse(**data)
+        return DeviceResponse(**data).devices
 
     async def get(self, deveui: str) -> DeviceInstance:
         """Retrieve a device by its DevEUI.
@@ -223,7 +223,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             DeviceInstance: The device instance matching the given DevEUI.
         """
         url = self._build_url(f"{deveui}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceInstance(**data)
 
@@ -240,12 +240,12 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceCreateResponse(**result).id
 
-    async def update(self, deveui: str, data: DeviceUpdate) -> DeviceInstance:
+    async def update(self, deveui: str, data: DeviceUpdate) -> bool:
         """Update a device (full replacement).
 
         Args:
@@ -253,18 +253,18 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             data: The complete device data for replacement.
 
         Returns:
-            DeviceInstance: The updated device instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{deveui}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, deveui: str, data: DevicePatch) -> DeviceInstance:
+    async def patch(self, deveui: str, data: DevicePatch) -> bool:
         """Partially update a device.
 
         Args:
@@ -272,16 +272,16 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             data: The partial device data to update.
 
         Returns:
-            DeviceInstance: The updated device instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{deveui}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, deveui: str) -> None:
         """Delete a device.
@@ -293,7 +293,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{deveui}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     async def send_message(self, deveui: str, data: DeviceMessage) -> None:
@@ -310,7 +310,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         self._parse_response(response)
 
@@ -340,7 +340,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return DevicePayloadResponse(**data)
@@ -352,7 +352,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             DevicesHealthResponse: Devices grouped by their health status.
         """
         url = self._build_url("health")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthResponse(**data)
 
@@ -363,6 +363,6 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             DevicesHealthCountResponse: Device counts grouped by health status.
         """
         url = self._build_url("healthcount")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthCountResponse(**data)

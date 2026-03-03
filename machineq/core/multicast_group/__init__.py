@@ -6,8 +6,6 @@ from .models import (
     AddGatewaysWithMulticastGroupRequest,
     AddGatewaysWithMulticastGroupResponse,
     CreateMulticastGroupRequest,
-    CreateMulticastGroupResponse,
-    DeleteMulticastGroupResponse,
     GetGatewaysByMulticastGroupResponse,
     GetMulticastGroupResponse,
     GetMulticastGroupsResponse,
@@ -17,7 +15,6 @@ from .models import (
     RemoveGatewaysFromMulticastGroupRequest,
     RemoveGatewaysFromMulticastGroupResponse,
     UpdateMulticastGroupRequest,
-    UpdateMulticastGroupResponse,
 )
 
 __all__ = [
@@ -26,8 +23,6 @@ __all__ = [
     "AddGatewaysWithMulticastGroupRequest",
     "AddGatewaysWithMulticastGroupResponse",
     "CreateMulticastGroupRequest",
-    "CreateMulticastGroupResponse",
-    "DeleteMulticastGroupResponse",
     "GetGatewaysByMulticastGroupResponse",
     "GetMulticastGroupResponse",
     "GetMulticastGroupsResponse",
@@ -37,5 +32,4 @@ __all__ = [
     "RemoveGatewaysFromMulticastGroupRequest",
     "RemoveGatewaysFromMulticastGroupResponse",
     "UpdateMulticastGroupRequest",
-    "UpdateMulticastGroupResponse",
 ]

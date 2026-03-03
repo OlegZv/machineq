@@ -33,7 +33,7 @@ class SyncUsers(BaseResource["SyncClient"]):
             list[UserInstance]: List of all user instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return UserResponse(**data).users
 
@@ -47,7 +47,7 @@ class SyncUsers(BaseResource["SyncClient"]):
             UserInstance: The user instance matching the given ID.
         """
         url = self._build_url(f"{user_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return UserInstance(**data)
 
@@ -64,7 +64,7 @@ class SyncUsers(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return UserCreateResponse(**result).id
@@ -83,7 +83,7 @@ class SyncUsers(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -102,7 +102,7 @@ class SyncUsers(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -117,7 +117,7 @@ class SyncUsers(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{user_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
 
@@ -134,7 +134,7 @@ class AsyncUsers(BaseResource["AsyncClient"]):
             list[UserInstance]: List of all user instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return UserResponse(**data).users
 
@@ -148,7 +148,7 @@ class AsyncUsers(BaseResource["AsyncClient"]):
             UserInstance: The user instance matching the given ID.
         """
         url = self._build_url(f"{user_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return UserInstance(**data)
 
@@ -165,12 +165,12 @@ class AsyncUsers(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return UserCreateResponse(**result).id
 
-    async def update(self, user_id: str, data: UserUpdate) -> UserInstance:
+    async def update(self, user_id: str, data: UserUpdate) -> bool:
         """Update a user (full replacement).
 
         Args:
@@ -178,18 +178,18 @@ class AsyncUsers(BaseResource["AsyncClient"]):
             data: The complete user data for replacement.
 
         Returns:
-            UserInstance: The updated user instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{user_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return UserInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, user_id: str, data: UserPatch) -> UserInstance:
+    async def patch(self, user_id: str, data: UserPatch) -> bool:
         """Partially update a user.
 
         Args:
@@ -197,16 +197,16 @@ class AsyncUsers(BaseResource["AsyncClient"]):
             data: The partial user data to update.
 
         Returns:
-            UserInstance: The updated user instance.
+            bool: True if the patch was successful, False otherwise.
         """
         url = self._build_url(f"{user_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return UserInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, user_id: str) -> None:
         """Delete a user.
@@ -218,5 +218,5 @@ class AsyncUsers(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{user_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)

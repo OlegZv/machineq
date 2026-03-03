@@ -2,20 +2,20 @@
 
 import pytest
 
-from machineq.client.sync import SyncClient
-from machineq.core.service_profile.api import SyncServiceProfiles
+from machineq.core.service_profile.api import AsyncServiceProfiles, SyncServiceProfiles
 
 
 @pytest.fixture
-def service_profiles_api(sync_client: SyncClient) -> SyncServiceProfiles:
-    """Get service profiles API resource."""
-    return sync_client.service_profiles
+def service_profiles_api(client) -> SyncServiceProfiles | AsyncServiceProfiles:
+    """Get service profiles API resource from whichever client was requested."""
+    return client.service_profiles
 
 
+@pytest.mark.asyncio
 class TestServiceProfiles:
     """Service Profile API tests."""
 
-    def test_get_all(self, service_profiles_api: SyncServiceProfiles):
+    async def test_get_all(self, service_profiles_api):
         """Test listing all service profiles."""
-        result = service_profiles_api.get_all()
+        result = await service_profiles_api.get_all()
         assert len(result) > 0

@@ -13,23 +13,11 @@ class CreateMulticastGroupRequest(BaseModelWithConfig):
     ping_slot_period: int
 
 
-class CreateMulticastGroupResponse(BaseModelWithConfig):
-    response: bool
-
-
 class UpdateMulticastGroupRequest(BaseModelWithConfig):
     multicast_deveui: str
     name: str
     data_rate: int
     frequency: int
-
-
-class UpdateMulticastGroupResponse(BaseModelWithConfig):
-    response: bool
-
-
-class DeleteMulticastGroupResponse(BaseModelWithConfig):
-    response: bool
 
 
 class MulticastGroup(BaseModelWithConfig):

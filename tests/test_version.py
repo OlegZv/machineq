@@ -2,19 +2,19 @@
 
 import pytest
 
-from machineq.client.sync import SyncClient
-from machineq.core.version.api import SyncVersion
+from machineq.core.version.api import AsyncVersion, SyncVersion
 
 
 @pytest.fixture
-def version_api(sync_client: SyncClient) -> SyncVersion:
-    """Get version API resource."""
-    return sync_client.version
+def version_api(client) -> SyncVersion | AsyncVersion:
+    """Get version API resource from whichever client was requested."""
+    return client.version
 
 
+@pytest.mark.asyncio
 class TestVersion:
     """Version API tests."""
 
-    def test_get(self, version_api: SyncVersion):
+    async def test_get(self, version_api):
         """Test getting API version information."""
-        version_api.get()
+        await version_api.get()

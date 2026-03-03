@@ -2,19 +2,19 @@
 
 import pytest
 
-from machineq.client.sync import SyncClient
-from machineq.core.multicast_group.api import SyncMulticastGroups
+from machineq.core.multicast_group.api import AsyncMulticastGroups, SyncMulticastGroups
 
 
 @pytest.fixture
-def multicast_groups_api(sync_client: SyncClient) -> SyncMulticastGroups:
-    """Get multicast groups API resource."""
-    return sync_client.multicast_groups
+def multicast_groups_api(client) -> SyncMulticastGroups | AsyncMulticastGroups:
+    """Get multicast groups API resource from whichever client was requested."""
+    return client.multicast_groups
 
 
+@pytest.mark.asyncio
 class TestMulticastGroups:
     """Multicast Group API tests."""
 
-    def test_get_all(self, multicast_groups_api: SyncMulticastGroups):
+    async def test_get_all(self, multicast_groups_api):
         """Test listing all multicast groups."""
-        multicast_groups_api.get_all()
+        await multicast_groups_api.get_all()

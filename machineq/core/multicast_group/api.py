@@ -11,8 +11,6 @@ from machineq.core.multicast_group.models import (
     AddGatewaysWithMulticastGroupRequest,
     AddGatewaysWithMulticastGroupResponse,
     CreateMulticastGroupRequest,
-    CreateMulticastGroupResponse,
-    DeleteMulticastGroupResponse,
     GetGatewaysByMulticastGroupResponse,
     GetMulticastGroupResponse,
     GetMulticastGroupsResponse,
@@ -22,8 +20,8 @@ from machineq.core.multicast_group.models import (
     RemoveGatewaysFromMulticastGroupRequest,
     RemoveGatewaysFromMulticastGroupResponse,
     UpdateMulticastGroupRequest,
-    UpdateMulticastGroupResponse,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -48,7 +46,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
             list[MulticastGroup]: List of all multicast group instances.
         """
         url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GetMulticastGroupsResponse(**data).multicast_groups
 
@@ -62,33 +60,33 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
             MulticastGroup: The multicast group instance matching the given DevEUI.
         """
         url = self._build_url(f"{multicast_deveui}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GetMulticastGroupResponse(**data).multicast_group
 
-    def create(self, data: CreateMulticastGroupRequest) -> CreateMulticastGroupResponse:
+    def create(self, data: CreateMulticastGroupRequest) -> bool:
         """Create a new multicast group.
 
         Args:
             data: The multicast group creation request data.
 
         Returns:
-            CreateMulticastGroupResponse: The created multicast group response.
+            bool: True if the creation was successful, False otherwise.
         """
         url = self._build_url()
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return CreateMulticastGroupResponse(**result)
+        return CommonOKResponse(**result).response
 
     def update(
         self,
         multicast_deveui: str,
         data: UpdateMulticastGroupRequest,
-    ) -> UpdateMulticastGroupResponse:
+    ) -> bool:
         """Update a multicast group.
 
         Args:
@@ -96,30 +94,30 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
             data: The multicast group update request data.
 
         Returns:
-            UpdateMulticastGroupResponse: The updated multicast group response.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{multicast_deveui}")
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return UpdateMulticastGroupResponse(**result)
+        return CommonOKResponse(**result).response
 
-    def delete(self, multicast_deveui: str):
+    def delete(self, multicast_deveui: str) -> bool:
         """Delete a multicast group.
 
         Args:
             multicast_deveui: The unique multicast device EUI to delete.
 
         Returns:
-            DeleteMulticastGroupResponse: The deletion response.
+            bool: True if the deletion was successful, False otherwise.
         """
         url = self._build_url(f"{multicast_deveui}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         data = self._parse_response(response)
-        return DeleteMulticastGroupResponse(**data)
+        return CommonOKResponse(**data).response
 
     def add_devices(
         self,
@@ -139,7 +137,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return AddDevicesWithMulticastGroupResponse(**result)
@@ -162,7 +160,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return RemoveDevicesFromMulticastGroupResponse(**result)
@@ -185,7 +183,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return AddGatewaysWithMulticastGroupResponse(**result)
@@ -208,7 +206,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return RemoveGatewaysFromMulticastGroupResponse(**result)
@@ -226,7 +224,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
             GetGatewaysByMulticastGroupResponse: Gateways in the multicast group.
         """
         url = self._build_url(f"{multicast_deveui}/gateways")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GetGatewaysByMulticastGroupResponse(**data)
 
@@ -235,10 +233,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
     """Async multicast groups resource for multicast group management."""
 
     def __init__(self, client: AsyncClient):
-        self.client = client
-        self.auth = client.auth
-        self.version = "v0"
-        self.base_path = "/multicastgroups"
+        super().__init__(client, "/multicastgroups", version="v0")
 
     async def get_all(self) -> list[MulticastGroup]:
         """List all multicast groups.
@@ -247,7 +242,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
             list[MulticastGroup]: List of all multicast group instances.
         """
         url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GetMulticastGroupsResponse(**data).multicast_groups
 
@@ -261,33 +256,33 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
             MulticastGroup: The multicast group instance matching the given DevEUI.
         """
         url = self._build_url(f"{multicast_deveui}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GetMulticastGroupResponse(**data).multicast_group
 
-    async def create(self, data: CreateMulticastGroupRequest) -> CreateMulticastGroupResponse:
+    async def create(self, data: CreateMulticastGroupRequest) -> bool:
         """Create a new multicast group.
 
         Args:
             data: The multicast group creation request data.
 
         Returns:
-            CreateMulticastGroupResponse: The created multicast group response.
+            bool: True if the creation was successful, False otherwise.
         """
         url = self._build_url()
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return CreateMulticastGroupResponse(**result)
+        return CommonOKResponse(**result).response
 
     async def update(
         self,
         multicast_deveui: str,
         data: UpdateMulticastGroupRequest,
-    ) -> UpdateMulticastGroupResponse:
+    ) -> bool:
         """Update a multicast group.
 
         Args:
@@ -295,30 +290,30 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
             data: The multicast group update request data.
 
         Returns:
-            UpdateMulticastGroupResponse: The updated multicast group response.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{multicast_deveui}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return UpdateMulticastGroupResponse(**result)
+        return CommonOKResponse(**result).response
 
-    async def delete(self, multicast_deveui: str):
+    async def delete(self, multicast_deveui: str) -> bool:
         """Delete a multicast group.
 
         Args:
             multicast_deveui: The unique multicast device EUI to delete.
 
         Returns:
-            DeleteMulticastGroupResponse: The deletion response.
+            bool: True if the deletion was successful, False otherwise.
         """
         url = self._build_url(f"{multicast_deveui}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         data = self._parse_response(response)
-        return DeleteMulticastGroupResponse(**data)
+        return CommonOKResponse(**data).response
 
     async def add_devices(
         self,
@@ -338,7 +333,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return AddDevicesWithMulticastGroupResponse(**result)
@@ -361,7 +356,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return RemoveDevicesFromMulticastGroupResponse(**result)
@@ -384,7 +379,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return AddGatewaysWithMulticastGroupResponse(**result)
@@ -407,7 +402,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return RemoveGatewaysFromMulticastGroupResponse(**result)
@@ -425,6 +420,6 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
             GetGatewaysByMulticastGroupResponse: Gateways in the multicast group.
         """
         url = self._build_url(f"{multicast_deveui}/gateways")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GetGatewaysByMulticastGroupResponse(**data)
