@@ -2,6 +2,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
+from pydantic import field_serializer
+
 from machineq.core.shared.models import BaseModelWithConfig
 
 from ..decoder_type.models import PayloadDecoderType
@@ -71,12 +73,15 @@ class DeviceFilter(BaseModelWithConfig):
 
 
 class DeviceMessage(BaseModelWithConfig):
-    deveui: str
     payload: str | None
-    target_port: str | None
-    confirm: bool | None
-    flush_queue: bool | None
-    application_payload: dict[str, Any] | None
+    target_port: int | None
+    confirm: bool = False
+    flush_queue: bool = False
+    application_payload: dict[str, Any] | None = None
+
+    @field_serializer("target_port", mode="plain")
+    def int_to_str(self, value: int) -> str:
+        return f"{value}"
 
 
 class DevicePatch(BaseModelWithConfig):

@@ -124,15 +124,17 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
-    def send_message(self, deveui: str, data: DeviceMessage) -> None:
-        """Send a downstream message to a device.
+    def send_message(self, deveui: str, data: DeviceMessage) -> bool:
+        """Send a downstream message to a device.For class A device the message will be put in a
+        queue on the Network Server side and sent in the next downlink opportunity (after the next uplink).
+        For class C device it's sent immediately to the device.
 
         Args:
             deveui: The device EUI (unique identifier).
             data: The message data to send.
 
         Returns:
-            None
+            bool: True if the message was queued. Exception otherwise.
         """
         url = self._build_url(f"{deveui}/message")
         response = self.client.http_client.post(
@@ -140,7 +142,8 @@ class SyncDevices(BaseResource["SyncClient"]):
             content=self._serialize_request_data(data),
             headers=self._build_headers(),
         )
-        self._parse_response(response)
+        data = self._parse_response(response)
+        return CommonOKResponse(**data).response
 
     def get_payloads(
         self,
@@ -296,15 +299,17 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
-    async def send_message(self, deveui: str, data: DeviceMessage) -> None:
-        """Send a downstream message to a device.
+    async def send_message(self, deveui: str, data: DeviceMessage) -> bool:
+        """Send a downstream message to a device.For class A device the message will be put in a
+        queue on the Network Server side and sent in the next downlink opportunity (after the next uplink).
+        For class C device it's sent immediately to the device.
 
         Args:
             deveui: The device EUI (unique identifier).
             data: The message data to send.
 
         Returns:
-            None
+            bool: True if the message was queued. Exception otherwise.
         """
         url = self._build_url(f"{deveui}/message")
         response = await self.client.http_client.post(
@@ -312,7 +317,8 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             content=self._serialize_request_data(data),
             headers=self._build_headers(),
         )
-        self._parse_response(response)
+        data = self._parse_response(response)
+        return CommonOKResponse(**data).response
 
     async def get_payloads(
         self,
