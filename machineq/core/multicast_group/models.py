@@ -1,20 +1,28 @@
+from enum import Enum
+
 from machineq.core.shared.models import BaseModelWithConfig
+
+
+class MulticastGroupType(str, Enum):
+    CLASS_C = "C"
+    CLASS_B = "B"
 
 
 class CreateMulticastGroupRequest(BaseModelWithConfig):
     name: str
     multicast_deveui: str
     multicast_dev_addr: str
-    group_type: str
+    group_type: MulticastGroupType
     multicast_nwk_s_key: str
     multicast_app_s_key: str
     data_rate: int
     frequency: int
-    ping_slot_period: int
+    """The frequency for multicast group in units of Hz."""
+    ping_slot_period: int = 0
+    """The pingslot period for multicast group. Required for ClassB, ignored for ClassC."""
 
 
 class UpdateMulticastGroupRequest(BaseModelWithConfig):
-    multicast_deveui: str
     name: str
     data_rate: int
     frequency: int
@@ -38,28 +46,7 @@ class GetMulticastGroupsResponse(BaseModelWithConfig):
     multicast_groups: list[MulticastGroup]
 
 
-class AddDevicesWithMulticastGroupRequest(BaseModelWithConfig):
-    multicast_deveui: str
-    devices: list[str]
-
-
-class AddDevicesWithMulticastGroupResponse(BaseModelWithConfig):
-    devices_added: list[str]
-    devices_ignored: list[str]
-
-
-class RemoveDevicesFromMulticastGroupRequest(BaseModelWithConfig):
-    multicast_deveui: str
-    devices: list[str]
-
-
-class RemoveDevicesFromMulticastGroupResponse(BaseModelWithConfig):
-    devices_removed: list[str]
-    devices_ignored: list[str]
-
-
 class AddGatewaysWithMulticastGroupRequest(BaseModelWithConfig):
-    multicast_deveui: str
     gateways: list[str]
 
 
@@ -69,7 +56,6 @@ class AddGatewaysWithMulticastGroupResponse(BaseModelWithConfig):
 
 
 class RemoveGatewaysFromMulticastGroupRequest(BaseModelWithConfig):
-    multicast_deveui: str
     gateways: list[str]
 
 
