@@ -1,6 +1,7 @@
 """Tests for Device API."""
 
 import asyncio
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from async_test_client import AsyncTestClient
@@ -78,6 +79,19 @@ class TestDevices:
             data = DeviceMessage(payload="01", target_port=203)
             with pytest.raises(APIError, match=r"No Base Station Available|Invalid DevEUI"):
                 await devices_api.send_message(deveui, data)
+            # test payloads, even though it would return an empty list for now
+            payloads = await devices_api.get_payloads(deveui)
+            assert len(payloads) == 0
+
+            # try with start and end time
+            end = datetime.now(timezone.utc)
+            start = end - timedelta(minutes=5)
+            payloads = await devices_api.get_payloads(deveui, start, end)
+            assert len(payloads) == 0
+
+            # should raise when end before start
+            with pytest.raises(ValueError, match="The end time cannot come before start time"):
+                await devices_api.get_payloads(deveui, end, start)
         finally:
             await devices_api.delete(deveui)
 

@@ -95,7 +95,7 @@ class DevicePatch(BaseModelWithConfig):
 
 
 class DevicePayload(BaseModelWithConfig):
-    time: str
+    time: datetime
     data: dict[str, Any]
     application_data: dict[str, Any]
 

@@ -1,5 +1,7 @@
 """Tests for Device Group API."""
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
 from async_test_client import AsyncTestClient
 from conftest import ProfileGetter
@@ -36,6 +38,20 @@ class TestDeviceGroups:
             # get all should contain the created group too
             all_groups = await device_groups_api.get_all()
             assert any(g.id == group_id for g in all_groups)
+
+            # test reset works, even thought there would be no data in the group
+            recent = await device_groups_api.get_recent(group_id)
+            assert len(recent) == 0
+
+            # try with start and end time
+            end = datetime.now(timezone.utc)
+            start = end - timedelta(minutes=5)
+            recent = await device_groups_api.get_recent(group_id, start_time=start, end_time=end)
+            assert len(recent) == 0
+
+            # should raise when end before start
+            with pytest.raises(ValueError, match="The end time cannot come before start time"):
+                await device_groups_api.get_recent(group_id, start_time=end, end_time=start)
         finally:
             await device_groups_api.delete(group_id)
 

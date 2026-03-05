@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
@@ -15,6 +16,7 @@ from machineq.core.device_group.models import (
     GetDeviceGroupRecentResponse,
 )
 from machineq.core.shared.models import CommonOKResponse
+from machineq.core.utils import ensure_utc_and_str
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -123,8 +125,8 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         self,
         group_id: str,
         payload: str | None = None,
-        start_time: str | None = None,
-        end_time: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
     ) -> list[str]:
         """Retrieve devices with recent data in a group.
 
@@ -142,9 +144,11 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         if payload:
             params["Payload"] = payload
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
 
         response = self.client.http_client.get(
             url,
@@ -257,16 +261,17 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         self,
         group_id: str,
         payload: str | None = None,
-        start_time: str | None = None,
-        end_time: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
     ) -> list[str]:
         """Retrieve devices with recent data in a group.
+        TODO: define payload filter better.
 
         Args:
             group_id: The unique identifier of the device group.
             payload: Optional payload filter.
-            start_time: Optional ISO 8601 formatted start time.
-            end_time: Optional ISO 8601 formatted end time.
+            start_time: Optional start time.
+            end_time: Optional end time.
 
         Returns:
             list[str]: Devices with recent data in the group.
@@ -276,10 +281,11 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         if payload:
             params["Payload"] = payload
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
-
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
         response = await self.client.http_client.get(
             url,
             params=params,

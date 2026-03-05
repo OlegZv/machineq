@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
@@ -19,6 +20,7 @@ from machineq.core.device.models import (
     DeviceUpdate,
 )
 from machineq.core.shared.models import CommonOKResponse
+from machineq.core.utils import ensure_utc_and_str
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -147,15 +149,15 @@ class SyncDevices(BaseResource["SyncClient"]):
     def get_payloads(
         self,
         deveui: str,
-        start_time: str | None = None,
-        end_time: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
     ) -> list[DevicePayload]:
         """Retrieve device payloads within a time range.
 
         Args:
             deveui: The device EUI (unique identifier).
-            start_time: Optional ISO 8601 formatted start time.
-            end_time: Optional ISO 8601 formatted end time.
+            start_time: Optional start time.
+            end_time: Optional end time.
 
         Returns:
             DevicePayloadResponse: The device payloads within the specified time range.
@@ -163,10 +165,11 @@ class SyncDevices(BaseResource["SyncClient"]):
         url = self._build_url(f"{deveui}/payloads")
         params = {}
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
-
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
         response = self.client.http_client.get(
             url,
             params=params,
@@ -320,15 +323,15 @@ class AsyncDevices(BaseResource["AsyncClient"]):
     async def get_payloads(
         self,
         deveui: str,
-        start_time: str | None = None,
-        end_time: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
     ) -> list[DevicePayload]:
         """Retrieve device payloads within a time range.
 
         Args:
             deveui: The device EUI (unique identifier).
-            start_time: Optional ISO 8601 formatted start time.
-            end_time: Optional ISO 8601 formatted end time.
+            start_time: Optional start time.
+            end_time: Optional end time.
 
         Returns:
             list[DevicePayload]: The device payloads within the specified time range.
@@ -336,10 +339,11 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         url = self._build_url(f"{deveui}/payloads")
         params = {}
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
-
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
         response = await self.client.http_client.get(
             url,
             params=params,

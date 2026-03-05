@@ -2,38 +2,17 @@
 
 from __future__ import annotations
 
-import warnings
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
 from machineq.core.logs import AckFilter, ActivationFilter, LateFilter, LogInstance, MessageTypeFilter, StreamFilter
 from machineq.core.logs.models import LogResponse
+from machineq.core.utils import ensure_utc_and_str
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
     from machineq.client.sync import SyncClient
-
-
-def ensure_utc_and_str(dt: datetime) -> str:
-    """Ensure a datetime is timezone-aware in timezone.utc.
-    If the user provides a naive datetime, issue a warning and try our best to convert from local
-    timezone to timezone.utc. If the user provides a timezone-aware datetime, convert it to timezone.utc if it's not already.
-    """
-    if dt.tzinfo is None:
-        # Naive datetime, assume it's in local timezone and convert to timezone.utc
-
-        warnings.warn(
-            "Naive datetime provided. Assuming local timezone and converting to timezone.utc. "
-            "Please provide timezone-aware datetimes in the future.",
-            UserWarning,
-            stacklevel=2,
-        )
-        dt = dt.astimezone(timezone.utc)
-    else:
-        # Timezone-aware datetime, convert to timezone.utc if it's not already
-        dt = dt.astimezone(timezone.utc)
-    return dt.isoformat().replace("+00:00", "Z")
 
 
 class SyncLogs(BaseResource["SyncClient"]):
