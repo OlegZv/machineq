@@ -38,22 +38,22 @@ class MqAuth:
     expires_at: datetime = field(default_factory=lambda: datetime.now())
     _token: str = field(default="", repr=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.client.headers.update({"User-Agent": f"machineq-py/{__version__}"})
 
     @property
-    def env_str(self):
+    def env_str(self) -> str:
         return f".{self.env}" if self.env != MqApiEnvironment.PROD else ""
 
     @property
-    def oauth_host(self):
+    def oauth_host(self) -> str:
         return f"https://identity{self.env_str}.machineq.net/oauth"
 
     @property
-    def token_url(self):
+    def token_url(self) -> str:
         return f"{self.oauth_host}/token"
 
-    def refresh(self):
+    def refresh(self) -> None:
         auth_params: dict[str, str] = {
             "grant_type": "client_credentials",
             "client_id": self.client_id,

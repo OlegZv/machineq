@@ -13,6 +13,7 @@ from machineq.core.gateway_group.models import (
     GatewayGroupResponse,
     GatewayGroupUpdate,
 )
+from machineq.core.shared.models import CommonOKResponse
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -31,9 +32,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         Returns:
             list[GatewayGroupInstance]: List of all gateway group instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return GatewayGroupResponse(**data).gateway_groups
 
     def get(self, group_id: str) -> GatewayGroupInstance:
@@ -46,7 +45,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             GatewayGroupInstance: The gateway group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayGroupInstance(**data)
 
@@ -63,12 +62,12 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return GatewayGroupCreateResponse(**result).id
 
-    def update(self, group_id: str, data: GatewayGroupUpdate) -> GatewayGroupInstance:
+    def update(self, group_id: str, data: GatewayGroupUpdate) -> bool:
         """Update a gateway group (full replacement).
 
         Args:
@@ -82,12 +81,12 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, group_id: str, data: GatewayGroupPatch) -> GatewayGroupInstance:
+    def patch(self, group_id: str, data: GatewayGroupPatch) -> bool:
         """Partially update a gateway group.
 
         Args:
@@ -101,10 +100,10 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, group_id: str) -> None:
         """Delete a gateway group.
@@ -116,7 +115,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
 
@@ -132,9 +131,7 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
         Returns:
             list[GatewayGroupInstance]: List of all gateway group instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return GatewayGroupResponse(**data).gateway_groups
 
     async def get(self, group_id: str) -> GatewayGroupInstance:
@@ -147,7 +144,7 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             GatewayGroupInstance: The gateway group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return GatewayGroupInstance(**data)
 
@@ -164,12 +161,12 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return GatewayGroupCreateResponse(**result).id
 
-    async def update(self, group_id: str, data: GatewayGroupUpdate) -> GatewayGroupInstance:
+    async def update(self, group_id: str, data: GatewayGroupUpdate) -> bool:
         """Update a gateway group (full replacement).
 
         Args:
@@ -177,18 +174,18 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             data: The complete gateway group data for replacement.
 
         Returns:
-            GatewayGroupInstance: The updated gateway group instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, group_id: str, data: GatewayGroupPatch) -> GatewayGroupInstance:
+    async def patch(self, group_id: str, data: GatewayGroupPatch) -> bool:
         """Partially update a gateway group.
 
         Args:
@@ -196,16 +193,16 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             data: The partial gateway group data to update.
 
         Returns:
-            GatewayGroupInstance: The updated gateway group instance.
+            bool: True if the patch was successful, False otherwise.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return GatewayGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, group_id: str) -> None:
         """Delete a gateway group.
@@ -217,5 +214,5 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)

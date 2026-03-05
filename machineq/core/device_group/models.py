@@ -24,9 +24,8 @@ class DeviceGroupInstance(BaseModelWithConfig):
 
 
 class DeviceGroupPatch(BaseModelWithConfig):
-    id: str
-    name: str | None
-    device_list: list[str] | None
+    name: str | None = None
+    device_list: list[str] | None = None
 
 
 class DeviceGroupResponse(BaseModelWithConfig):
@@ -34,7 +33,6 @@ class DeviceGroupResponse(BaseModelWithConfig):
 
 
 class DeviceGroupUpdate(BaseModelWithConfig):
-    id: str
     name: str
     device_list: list[str] | None
 

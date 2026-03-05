@@ -9,6 +9,8 @@ class UserCreate(BaseModelWithConfig):
     last_name: str
     phone_number: str
     roles: list[str] | None = None
+    """If left blank(None), the user will be created without roles. Currently reflected as
+    an array with an empty string in it ([""])"""
 
 
 class UserCreateResponse(BaseModelWithConfig):
@@ -28,18 +30,18 @@ class UserInstance(BaseModelWithConfig):
     phone_number: str
     password_hash: str
     roles: list[str]
+    """An empty roles set is represented as an array with an empty string in it ([""])"""
     admin_roles: list[str]
     subscriber_id: str
 
 
 class UserPatch(BaseModelWithConfig):
-    id: str
-    email: str
-    first_name: str
-    last_name: str
-    phone_number: str
-    password: str
-    roles: list[str]
+    email: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    phone_number: str | None = None
+    password: str | None = None
+    roles: list[str] | None = None
 
 
 class UserResponse(BaseModelWithConfig):
@@ -47,7 +49,6 @@ class UserResponse(BaseModelWithConfig):
 
 
 class UserUpdate(BaseModelWithConfig):
-    id: str
     email: str
     first_name: str
     last_name: str

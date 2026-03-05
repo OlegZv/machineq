@@ -2,10 +2,10 @@ from machineq.core.shared.models import BaseModelWithConfig
 
 
 class PermissionObject(BaseModelWithConfig):
-    create: bool
-    read: bool
-    update: bool
-    delete: bool
+    create: bool = False
+    read: bool = False
+    update: bool = False
+    delete: bool = False
 
 
 class SubscriberInfo(BaseModelWithConfig):

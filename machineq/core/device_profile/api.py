@@ -29,9 +29,7 @@ class SyncDeviceProfiles(BaseResource["SyncClient"]):
         Returns:
             list[DeviceProfileInstance]: List of all device profile instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return DeviceProfileResponse(**data).device_profiles
 
     def update_devices(
@@ -52,7 +50,7 @@ class SyncDeviceProfiles(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceProfileDevicesUpdateResponse(**result)
@@ -70,9 +68,7 @@ class AsyncDeviceProfiles(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceProfileInstance]: List of all device profile instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return DeviceProfileResponse(**data).device_profiles
 
     async def update_devices(
@@ -93,7 +89,7 @@ class AsyncDeviceProfiles(BaseResource["AsyncClient"]):
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceProfileDevicesUpdateResponse(**result)

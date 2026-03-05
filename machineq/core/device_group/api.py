@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
@@ -14,6 +15,8 @@ from machineq.core.device_group.models import (
     DeviceGroupUpdate,
     GetDeviceGroupRecentResponse,
 )
+from machineq.core.shared.models import CommonOKResponse
+from machineq.core.utils import ensure_utc_and_str
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -32,9 +35,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         Returns:
             list[DeviceGroupInstance]: List of all device group instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return DeviceGroupResponse(**data).device_groups
 
     def get(self, group_id: str) -> DeviceGroupInstance:
@@ -47,7 +48,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             DeviceGroupInstance: The device group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceGroupInstance(**data)
 
@@ -64,12 +65,12 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceGroupCreateResponse(**result).id
 
-    def update(self, group_id: str, data: DeviceGroupUpdate) -> DeviceGroupInstance:
+    def update(self, group_id: str, data: DeviceGroupUpdate) -> bool:
         """Update a device group (full replacement).
 
         Args:
@@ -83,12 +84,12 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, group_id: str, data: DeviceGroupPatch) -> DeviceGroupInstance:
+    def patch(self, group_id: str, data: DeviceGroupPatch) -> bool:
         """Partially update a device group.
 
         Args:
@@ -102,10 +103,10 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, group_id: str) -> None:
         """Delete a device group.
@@ -117,16 +118,16 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     def get_recent(
         self,
         group_id: str,
         payload: str | None = None,
-        start_time: str | None = None,
-        end_time: str | None = None,
-    ):
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
+    ) -> list[str]:
         """Retrieve devices with recent data in a group.
 
         Args:
@@ -136,24 +137,26 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             end_time: Optional ISO 8601 formatted end time.
 
         Returns:
-            GetDeviceGroupRecentResponse: Devices with recent data in the group.
+            list[str]: Devices with recent data in the group.
         """
         url = self._build_url(f"{group_id}/recent")
         params = {}
         if payload:
             params["Payload"] = payload
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
 
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return GetDeviceGroupRecentResponse(**data)
+        return GetDeviceGroupRecentResponse(**data).device_list
 
 
 class AsyncDeviceGroups(BaseResource["AsyncClient"]):
@@ -168,9 +171,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceGroupInstance]: List of all device group instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return DeviceGroupResponse(**data).device_groups
 
     async def get(self, group_id: str) -> DeviceGroupInstance:
@@ -183,7 +184,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             DeviceGroupInstance: The device group instance matching the given ID.
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceGroupInstance(**data)
 
@@ -200,12 +201,12 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceGroupCreateResponse(**result).id
 
-    async def update(self, group_id: str, data: DeviceGroupUpdate) -> DeviceGroupInstance:
+    async def update(self, group_id: str, data: DeviceGroupUpdate) -> bool:
         """Update a device group (full replacement).
 
         Args:
@@ -213,18 +214,18 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             data: The complete device group data for replacement.
 
         Returns:
-            DeviceGroupInstance: The updated device group instance.
+            bool: True if the update was successful.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, group_id: str, data: DeviceGroupPatch) -> DeviceGroupInstance:
+    async def patch(self, group_id: str, data: DeviceGroupPatch) -> bool:
         """Partially update a device group.
 
         Args:
@@ -232,16 +233,16 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             data: The partial device group data to update.
 
         Returns:
-            DeviceGroupInstance: The updated device group instance.
+            bool: True if the patch was successful.
         """
         url = self._build_url(f"{group_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceGroupInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, group_id: str) -> None:
         """Delete a device group.
@@ -253,40 +254,42 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{group_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     async def get_recent(
         self,
         group_id: str,
         payload: str | None = None,
-        start_time: str | None = None,
-        end_time: str | None = None,
-    ):
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
+    ) -> list[str]:
         """Retrieve devices with recent data in a group.
+        TODO: define payload filter better.
 
         Args:
             group_id: The unique identifier of the device group.
             payload: Optional payload filter.
-            start_time: Optional ISO 8601 formatted start time.
-            end_time: Optional ISO 8601 formatted end time.
+            start_time: Optional start time.
+            end_time: Optional end time.
 
         Returns:
-            GetDeviceGroupRecentResponse: Devices with recent data in the group.
+            list[str]: Devices with recent data in the group.
         """
         url = self._build_url(f"{group_id}/recent")
         params = {}
         if payload:
             params["Payload"] = payload
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
-
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return GetDeviceGroupRecentResponse(**data)
+        return GetDeviceGroupRecentResponse(**data).device_list

@@ -24,9 +24,8 @@ class GatewayGroupInstance(BaseModelWithConfig):
 
 
 class GatewayGroupPatch(BaseModelWithConfig):
-    id: str
-    name: str | None
-    gateway_list: list[str] | None
+    name: str | None = None
+    gateway_list: list[str] | None = None
 
 
 class GatewayGroupResponse(BaseModelWithConfig):
@@ -34,6 +33,5 @@ class GatewayGroupResponse(BaseModelWithConfig):
 
 
 class GatewayGroupUpdate(BaseModelWithConfig):
-    id: str
     name: str
     gateway_list: list[str] | None

@@ -27,9 +27,7 @@ class SyncDecoderTypes(BaseResource["SyncClient"]):
         Returns:
             list[DecoderTypeInstance]: List of all decoder type instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return DecoderTypeResponse(**data).decoder_types
 
     def get(self, decoder_id: str) -> DecoderTypeInstance:
@@ -42,7 +40,7 @@ class SyncDecoderTypes(BaseResource["SyncClient"]):
             DecoderTypeInstance: The decoder type instance matching the given ID.
         """
         url = self._build_url(f"{decoder_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DecoderTypeInstance(**data)
 
@@ -59,9 +57,7 @@ class AsyncDecoderTypes(BaseResource["AsyncClient"]):
         Returns:
             list[DecoderTypeInstance]: List of all decoder type instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return DecoderTypeResponse(**data).decoder_types
 
     async def get(self, decoder_id: str) -> DecoderTypeInstance:
@@ -74,6 +70,6 @@ class AsyncDecoderTypes(BaseResource["AsyncClient"]):
             DecoderTypeInstance: The decoder type instance matching the given ID.
         """
         url = self._build_url(f"{decoder_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DecoderTypeInstance(**data)

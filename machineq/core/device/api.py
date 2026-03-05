@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
+from machineq.core.device import DevicePayload
 from machineq.core.device.models import (
     DeviceCreate,
     DeviceCreateResponse,
@@ -17,6 +19,8 @@ from machineq.core.device.models import (
     DevicesHealthResponse,
     DeviceUpdate,
 )
+from machineq.core.shared.models import CommonOKResponse
+from machineq.core.utils import ensure_utc_and_str
 
 if TYPE_CHECKING:
     from machineq.client.async_ import AsyncClient
@@ -35,9 +39,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         Returns:
             list[DeviceInstance]: List of all device instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return DeviceResponse(**data).devices
 
     def get(self, deveui: str) -> DeviceInstance:
@@ -50,7 +52,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             DeviceInstance: The device instance matching the given DevEUI.
         """
         url = self._build_url(f"{deveui}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceInstance(**data)
 
@@ -67,12 +69,12 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceCreateResponse(**result).id
 
-    def update(self, deveui: str, data: DeviceUpdate) -> DeviceInstance:
+    def update(self, deveui: str, data: DeviceUpdate) -> bool:
         """Update a device (full replacement).
 
         Args:
@@ -86,12 +88,12 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
-    def patch(self, deveui: str, data: DevicePatch) -> DeviceInstance:
+    def patch(self, deveui: str, data: DevicePatch) -> bool:
         """Partially update a device.
 
         Args:
@@ -105,10 +107,10 @@ class SyncDevices(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
     def delete(self, deveui: str) -> None:
         """Delete a device.
@@ -120,39 +122,42 @@ class SyncDevices(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{deveui}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
-    def send_message(self, deveui: str, data: DeviceMessage) -> None:
-        """Send a downstream message to a device.
+    def send_message(self, deveui: str, data: DeviceMessage) -> bool:
+        """Send a downstream message to a device.For class A device the message will be put in a
+        queue on the Network Server side and sent in the next downlink opportunity (after the next uplink).
+        For class C device it's sent immediately to the device.
 
         Args:
             deveui: The device EUI (unique identifier).
             data: The message data to send.
 
         Returns:
-            None
+            bool: True if the message was queued. Exception otherwise.
         """
         url = self._build_url(f"{deveui}/message")
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
-        self._parse_response(response)
+        data = self._parse_response(response)
+        return CommonOKResponse(**data).response
 
     def get_payloads(
         self,
         deveui: str,
-        start_time: str | None = None,
-        end_time: str | None = None,
-    ):
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
+    ) -> list[DevicePayload]:
         """Retrieve device payloads within a time range.
 
         Args:
             deveui: The device EUI (unique identifier).
-            start_time: Optional ISO 8601 formatted start time.
-            end_time: Optional ISO 8601 formatted end time.
+            start_time: Optional start time.
+            end_time: Optional end time.
 
         Returns:
             DevicePayloadResponse: The device payloads within the specified time range.
@@ -160,17 +165,18 @@ class SyncDevices(BaseResource["SyncClient"]):
         url = self._build_url(f"{deveui}/payloads")
         params = {}
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
-
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
         response = self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return DevicePayloadResponse(**data)
+        return DevicePayloadResponse(**data).payloads
 
     def get_health(self) -> DevicesHealthResponse:
         """Retrieve devices grouped by health status.
@@ -179,18 +185,18 @@ class SyncDevices(BaseResource["SyncClient"]):
             DevicesHealthResponse: Devices grouped by their health status.
         """
         url = self._build_url("health")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthResponse(**data)
 
-    def get_health_count(self):
+    def get_health_count(self) -> DevicesHealthCountResponse:
         """Retrieve device count grouped by health status.
 
         Returns:
             DevicesHealthCountResponse: Device counts grouped by health status.
         """
         url = self._build_url("healthcount")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthCountResponse(**data)
 
@@ -201,16 +207,14 @@ class AsyncDevices(BaseResource["AsyncClient"]):
     def __init__(self, client: AsyncClient):
         super().__init__(client, "/devices")
 
-    async def get_all(self):
+    async def get_all(self) -> list[DeviceInstance]:
         """List all devices.
 
         Returns:
-            DeviceResponse: All device instances with response metadata.
+            list[DeviceInstance]: All device instances with response metadata.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
-        return DeviceResponse(**data)
+        data = await super().get_all_generic_async()
+        return DeviceResponse(**data).devices
 
     async def get(self, deveui: str) -> DeviceInstance:
         """Retrieve a device by its DevEUI.
@@ -222,7 +226,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             DeviceInstance: The device instance matching the given DevEUI.
         """
         url = self._build_url(f"{deveui}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DeviceInstance(**data)
 
@@ -239,12 +243,12 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return DeviceCreateResponse(**result).id
 
-    async def update(self, deveui: str, data: DeviceUpdate) -> DeviceInstance:
+    async def update(self, deveui: str, data: DeviceUpdate) -> bool:
         """Update a device (full replacement).
 
         Args:
@@ -252,18 +256,18 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             data: The complete device data for replacement.
 
         Returns:
-            DeviceInstance: The updated device instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{deveui}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, deveui: str, data: DevicePatch) -> DeviceInstance:
+    async def patch(self, deveui: str, data: DevicePatch) -> bool:
         """Partially update a device.
 
         Args:
@@ -271,16 +275,16 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             data: The partial device data to update.
 
         Returns:
-            DeviceInstance: The updated device instance.
+            bool: True if the update was successful, False otherwise.
         """
         url = self._build_url(f"{deveui}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return DeviceInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, deveui: str) -> None:
         """Delete a device.
@@ -292,76 +296,80 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{deveui}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
-    async def send_message(self, deveui: str, data: DeviceMessage) -> None:
-        """Send a downstream message to a device.
+    async def send_message(self, deveui: str, data: DeviceMessage) -> bool:
+        """Send a downstream message to a device.For class A device the message will be put in a
+        queue on the Network Server side and sent in the next downlink opportunity (after the next uplink).
+        For class C device it's sent immediately to the device.
 
         Args:
             deveui: The device EUI (unique identifier).
             data: The message data to send.
 
         Returns:
-            None
+            bool: True if the message was queued. Exception otherwise.
         """
         url = self._build_url(f"{deveui}/message")
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
-        self._parse_response(response)
+        data = self._parse_response(response)
+        return CommonOKResponse(**data).response
 
     async def get_payloads(
         self,
         deveui: str,
-        start_time: str | None = None,
-        end_time: str | None = None,
-    ):
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
+    ) -> list[DevicePayload]:
         """Retrieve device payloads within a time range.
 
         Args:
             deveui: The device EUI (unique identifier).
-            start_time: Optional ISO 8601 formatted start time.
-            end_time: Optional ISO 8601 formatted end time.
+            start_time: Optional start time.
+            end_time: Optional end time.
 
         Returns:
-            DevicePayloadResponse: The device payloads within the specified time range.
+            list[DevicePayload]: The device payloads within the specified time range.
         """
         url = self._build_url(f"{deveui}/payloads")
         params = {}
         if start_time:
-            params["StartTime"] = start_time
+            params["StartTime"] = ensure_utc_and_str(start_time)
         if end_time:
-            params["EndTime"] = end_time
-
+            params["EndTime"] = ensure_utc_and_str(end_time)
+        if start_time is not None and end_time is not None and end_time < start_time:
+            raise ValueError("The end time cannot come before start time")  # noqa: TRY003
         response = await self.client.http_client.get(
             url,
             params=params,
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return DevicePayloadResponse(**data)
+        return DevicePayloadResponse(**data).payloads
 
-    async def get_health(self):
+    async def get_health(self) -> DevicesHealthResponse:
         """Retrieve devices grouped by health status.
 
         Returns:
             DevicesHealthResponse: Devices grouped by their health status.
         """
         url = self._build_url("health")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthResponse(**data)
 
-    async def get_health_count(self):
+    async def get_health_count(self) -> DevicesHealthCountResponse:
         """Retrieve device count grouped by health status.
 
         Returns:
             DevicesHealthCountResponse: Device counts grouped by health status.
         """
         url = self._build_url("healthcount")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return DevicesHealthCountResponse(**data)
