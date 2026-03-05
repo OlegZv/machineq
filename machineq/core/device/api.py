@@ -36,9 +36,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         Returns:
             list[DeviceInstance]: List of all device instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return DeviceResponse(**data).devices
 
     def get(self, deveui: str) -> DeviceInstance:
@@ -211,9 +209,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceInstance]: All device instances with response metadata.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return DeviceResponse(**data).devices
 
     async def get(self, deveui: str) -> DeviceInstance:

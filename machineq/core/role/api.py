@@ -28,9 +28,7 @@ class SyncRoles(BaseResource["SyncClient"]):
 
     def get_all(self) -> list[RoleInstance]:
         """List all roles."""
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return RoleResponse(**data).roles
 
     def get(self, role_id: str) -> RoleInstance:
@@ -88,9 +86,7 @@ class AsyncRoles(BaseResource["AsyncClient"]):
 
     async def get_all(self) -> list[RoleInstance]:
         """List all roles."""
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return RoleResponse(**data).roles
 
     async def get(self, role_id: str) -> RoleInstance:

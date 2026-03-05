@@ -34,9 +34,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         Returns:
             list[OutputProfileInstance]: List of all output profile instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return OutputProfileResponse(**data).output_profiles
 
     def get(self, profile_id: str) -> OutputProfileInstance:
@@ -189,9 +187,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         Returns:
             list[OutputProfileInstance]: List of all output profile instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return OutputProfileResponse(**data).output_profiles
 
     async def get(self, profile_id: str) -> OutputProfileInstance:

@@ -32,9 +32,7 @@ class SyncUsers(BaseResource["SyncClient"]):
         Returns:
             list[UserInstance]: List of all user instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return UserResponse(**data).users
 
     def get(self, user_id: str) -> UserInstance:
@@ -133,9 +131,7 @@ class AsyncUsers(BaseResource["AsyncClient"]):
         Returns:
             list[UserInstance]: List of all user instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return UserResponse(**data).users
 
     async def get(self, user_id: str) -> UserInstance:

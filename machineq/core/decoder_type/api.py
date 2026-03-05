@@ -57,9 +57,7 @@ class AsyncDecoderTypes(BaseResource["AsyncClient"]):
         Returns:
             list[DecoderTypeInstance]: List of all decoder type instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return DecoderTypeResponse(**data).decoder_types
 
     async def get(self, decoder_id: str) -> DecoderTypeInstance:

@@ -33,9 +33,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         Returns:
             list[ApplicationInstance]: List of all application instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return ApplicationResponse(**data).applications
 
     def get(self, application_id: str) -> ApplicationInstance:
@@ -152,9 +150,7 @@ class AsyncApplications(BaseResource["AsyncClient"]):
         Returns:
             list[ApplicationInstance]: List of all application instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return ApplicationResponse(**data).applications
 
     async def get(self, application_id: str) -> ApplicationInstance:

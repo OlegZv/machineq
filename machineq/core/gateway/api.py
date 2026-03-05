@@ -37,9 +37,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         Returns:
             list[GatewayInstance]: List of all gateway instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return MachineqapiGatewayResponse(**data).gateways
 
     def get(self, gateway_id: str) -> GatewayInstance:
@@ -232,9 +230,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         Returns:
             list[GatewayInstance]: List of all gateway instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return MachineqapiGatewayResponse(**data).gateways
 
     async def get(self, gateway_id: str) -> GatewayInstance:

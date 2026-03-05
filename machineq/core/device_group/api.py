@@ -33,9 +33,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         Returns:
             list[DeviceGroupInstance]: List of all device group instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return DeviceGroupResponse(**data).device_groups
 
     def get(self, group_id: str) -> DeviceGroupInstance:
@@ -169,9 +167,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceGroupInstance]: List of all device group instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return DeviceGroupResponse(**data).device_groups
 
     async def get(self, group_id: str) -> DeviceGroupInstance:

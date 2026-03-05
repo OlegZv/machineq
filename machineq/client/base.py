@@ -50,7 +50,7 @@ class BaseResource(Generic[ClientType]):
         data = self._parse_response(response)
         return data
 
-    async def get_all_async_generic(self: BaseResource[AsyncClient]) -> dict[str, Any]:
+    async def get_all_generic_async(self: BaseResource[AsyncClient]) -> dict[str, Any]:
         """Common function for get_all, returns parsed json"""
         url = self._build_url()
         response = await self.client.http_client.get(url, headers=self._build_headers())

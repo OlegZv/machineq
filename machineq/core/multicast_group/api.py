@@ -41,9 +41,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         Returns:
             list[MulticastGroup]: List of all multicast group instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return GetMulticastGroupsResponse(**data).multicast_groups
 
     def get(self, multicast_deveui: str) -> MulticastGroup:
@@ -193,9 +191,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         Returns:
             list[MulticastGroup]: List of all multicast group instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers())
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return GetMulticastGroupsResponse(**data).multicast_groups
 
     async def get(self, multicast_deveui: str) -> MulticastGroup:
