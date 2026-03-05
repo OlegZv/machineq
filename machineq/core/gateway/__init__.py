@@ -11,6 +11,7 @@ from .models import (
     GatewayError,
     GatewayEvent,
     GatewayEventField,
+    GatewayEventsResponse,
     GatewayGpsSyncStatus,
     GatewayInstance,
     GatewayIsmBand,
@@ -27,7 +28,6 @@ from .models import (
     MachineqapiGatewayHealthState,
     MachineqapiGatewayManufacturer,
     MachineqapiGatewayResponse,
-    MachineqapiGetGatewayEventsResponse,
 )
 
 __all__ = [
@@ -41,6 +41,7 @@ __all__ = [
     "GatewayError",
     "GatewayEvent",
     "GatewayEventField",
+    "GatewayEventsResponse",
     "GatewayGpsSyncStatus",
     "GatewayInstance",
     "GatewayIsmBand",
@@ -57,5 +58,4 @@ __all__ = [
     "MachineqapiGatewayHealthState",
     "MachineqapiGatewayManufacturer",
     "MachineqapiGatewayResponse",
-    "MachineqapiGetGatewayEventsResponse",
 ]

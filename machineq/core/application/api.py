@@ -33,9 +33,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         Returns:
             list[ApplicationInstance]: List of all application instances.
         """
-        url = self._build_url()
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = super().get_all_generic()
         return ApplicationResponse(**data).applications
 
     def get(self, application_id: str) -> ApplicationInstance:
@@ -48,7 +46,7 @@ class SyncApplications(BaseResource["SyncClient"]):
             ApplicationInstance: The application instance matching the given ID.
         """
         url = self._build_url(f"{application_id}")
-        response = self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return ApplicationInstance(**data)
 
@@ -65,7 +63,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return ApplicationCreateResponse(**result)
@@ -84,7 +82,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         response = self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -103,7 +101,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         response = self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
         return CommonOKResponse(**result).response
@@ -118,7 +116,7 @@ class SyncApplications(BaseResource["SyncClient"]):
             None
         """
         url = self._build_url(f"{application_id}")
-        response = self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
     def refresh_token(self, application_id: str) -> str:
@@ -134,7 +132,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         response = self.client.http_client.post(
             url,
             content="{}",
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
         return RefreshApplicationResponse(**data).client_secret
@@ -152,9 +150,7 @@ class AsyncApplications(BaseResource["AsyncClient"]):
         Returns:
             list[ApplicationInstance]: List of all application instances.
         """
-        url = self._build_url()
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
-        data = self._parse_response(response)
+        data = await super().get_all_generic_async()
         return ApplicationResponse(**data).applications
 
     async def get(self, application_id: str) -> ApplicationInstance:
@@ -167,11 +163,11 @@ class AsyncApplications(BaseResource["AsyncClient"]):
             ApplicationInstance: The application instance matching the given ID.
         """
         url = self._build_url(f"{application_id}")
-        response = await self.client.http_client.get(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return ApplicationInstance(**data)
 
-    async def create(self, data: ApplicationCreate) -> str:
+    async def create(self, data: ApplicationCreate) -> ApplicationCreateResponse:
         """Create a new application.
 
         Args:
@@ -184,12 +180,12 @@ class AsyncApplications(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return ApplicationInstance(**result).id
+        return ApplicationCreateResponse(**result)
 
-    async def update(self, application_id: str, data: ApplicationUpdate) -> ApplicationInstance:
+    async def update(self, application_id: str, data: ApplicationUpdate) -> bool:
         """Update an application (full replacement).
 
         Args:
@@ -197,18 +193,18 @@ class AsyncApplications(BaseResource["AsyncClient"]):
             data: The complete application data for replacement.
 
         Returns:
-            ApplicationInstance: The updated application instance.
+            bool: True if the update was successful.
         """
         url = self._build_url(f"{application_id}")
         response = await self.client.http_client.put(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return ApplicationInstance(**result)
+        return CommonOKResponse(**result).response
 
-    async def patch(self, application_id: str, data: ApplicationPatch) -> ApplicationInstance:
+    async def patch(self, application_id: str, data: ApplicationPatch) -> bool:
         """Partially update an application.
 
         Args:
@@ -216,16 +212,16 @@ class AsyncApplications(BaseResource["AsyncClient"]):
             data: The partial application data to update.
 
         Returns:
-            ApplicationInstance: The updated application instance.
+            bool: True if the patch was successful.
         """
         url = self._build_url(f"{application_id}")
         response = await self.client.http_client.patch(
             url,
             content=self._serialize_request_data(data),
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         result = self._parse_response(response)
-        return ApplicationInstance(**result)
+        return CommonOKResponse(**result).response
 
     async def delete(self, application_id: str) -> None:
         """Delete an application.
@@ -237,10 +233,10 @@ class AsyncApplications(BaseResource["AsyncClient"]):
             None
         """
         url = self._build_url(f"{application_id}")
-        response = await self.client.http_client.delete(url, headers=self._build_headers(self.auth))
+        response = await self.client.http_client.delete(url, headers=self._build_headers())
         self._parse_response(response)
 
-    async def refresh_token(self, application_id: str) -> RefreshApplicationResponse:
+    async def refresh_token(self, application_id: str) -> str:
         """Refresh the application's token.
 
         Args:
@@ -253,7 +249,7 @@ class AsyncApplications(BaseResource["AsyncClient"]):
         response = await self.client.http_client.post(
             url,
             content="{}",
-            headers=self._build_headers(self.auth),
+            headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return RefreshApplicationResponse(**data)
+        return RefreshApplicationResponse(**data).client_secret
