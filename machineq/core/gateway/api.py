@@ -5,10 +5,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
+from machineq.core.gateway import GatewayDevice
 from machineq.core.gateway.models import (
     GatewayCreate,
     GatewayCreateResponse,
     GatewayDeviceResponse,
+    GatewayEventsResponse,
     GatewayInstance,
     GatewayPatch,
     GatewaysConnectionResponse,
@@ -16,7 +18,6 @@ from machineq.core.gateway.models import (
     GatewayStatistics,
     GatewayUpdate,
     MachineqapiGatewayResponse,
-    MachineqapiGetGatewayEventsResponse,
 )
 from machineq.core.shared.models import CommonOKResponse
 
@@ -127,7 +128,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         self,
         gateway_id: str,
         days: int | None = None,
-    ):
+    ) -> list[GatewayDevice]:
         """Retrieve devices seen by a gateway.
 
         Args:
@@ -135,7 +136,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             days: Optional number of days to look back.
 
         Returns:
-            GatewayDeviceResponse: Devices seen by the gateway.
+            list[GatewayDevice]: Devices seen by the gateway.
         """
         url = self._build_url(f"{gateway_id}/devices")
         params = {}
@@ -148,9 +149,9 @@ class SyncGateways(BaseResource["SyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return GatewayDeviceResponse(**data)
+        return GatewayDeviceResponse(**data).devices
 
-    def get_statistics(self, gateway_id: str):
+    def get_statistics(self, gateway_id: str) -> GatewayStatistics:
         """Retrieve gateway statistics.
 
         Args:
@@ -169,7 +170,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         node_id: str,
         start_time: str | None = None,
         end_time: str | None = None,
-    ):
+    ) -> GatewayEventsResponse:
         """Retrieve gateway events.
 
         Args:
@@ -178,7 +179,7 @@ class SyncGateways(BaseResource["SyncClient"]):
             end_time: Optional ISO 8601 formatted end time.
 
         Returns:
-            MachineqapiGetGatewayEventsResponse: Gateway events within the specified time range.
+            GatewayEventsResponse: Gateway events within the specified time range.
         """
         url = self._build_url(f"{node_id}/events")
         params = {}
@@ -193,9 +194,9 @@ class SyncGateways(BaseResource["SyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return MachineqapiGetGatewayEventsResponse(**data)
+        return GatewayEventsResponse(**data)
 
-    def get_connection_status(self):
+    def get_connection_status(self) -> GatewaysConnectionResponse:
         """Retrieve gateways grouped by connection status.
 
         Returns:
@@ -206,7 +207,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         data = self._parse_response(response)
         return GatewaysConnectionResponse(**data)
 
-    def get_health(self):
+    def get_health(self) -> GatewaysHealthResponse:
         """Retrieve gateways grouped by health status.
 
         Returns:
@@ -320,7 +321,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         self,
         gateway_id: str,
         days: int | None = None,
-    ):
+    ) -> list[GatewayDevice]:
         """Retrieve devices seen by a gateway.
 
         Args:
@@ -328,7 +329,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             days: Optional number of days to look back.
 
         Returns:
-            GatewayDeviceResponse: Devices seen by the gateway.
+            list[GatewayDevice]: Devices seen by the gateway.
         """
         url = self._build_url(f"{gateway_id}/devices")
         params = {}
@@ -341,9 +342,9 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return GatewayDeviceResponse(**data)
+        return GatewayDeviceResponse(**data).devices
 
-    async def get_statistics(self, gateway_id: str):
+    async def get_statistics(self, gateway_id: str) -> GatewayStatistics:
         """Retrieve gateway statistics.
 
         Args:
@@ -362,7 +363,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         node_id: str,
         start_time: str | None = None,
         end_time: str | None = None,
-    ):
+    ) -> GatewayEventsResponse:
         """Retrieve gateway events.
 
         Args:
@@ -371,7 +372,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             end_time: Optional ISO 8601 formatted end time.
 
         Returns:
-            MachineqapiGetGatewayEventsResponse: Gateway events within the specified time range.
+            GatewayEventsResponse: Gateway events within the specified time range.
         """
         url = self._build_url(f"{node_id}/events")
         params = {}
@@ -386,9 +387,9 @@ class AsyncGateways(BaseResource["AsyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return MachineqapiGetGatewayEventsResponse(**data)
+        return GatewayEventsResponse(**data)
 
-    async def get_connection_status(self):
+    async def get_connection_status(self) -> GatewaysConnectionResponse:
         """Retrieve gateways grouped by connection status.
 
         Returns:
@@ -399,7 +400,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         data = self._parse_response(response)
         return GatewaysConnectionResponse(**data)
 
-    async def get_health(self):
+    async def get_health(self) -> GatewaysHealthResponse:
         """Retrieve gateways grouped by health status.
 
         Returns:

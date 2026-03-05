@@ -1,6 +1,7 @@
 """Tests for Multicast Group API."""
 
 import pytest
+from async_test_client import AsyncTestClient
 
 from machineq import AsyncClient
 from machineq.core.gateway import Coordinates, GatewayCreate
@@ -8,13 +9,13 @@ from machineq.core.multicast_group import (
     CreateMulticastGroupRequest,
     UpdateMulticastGroupRequest,
 )
-from machineq.core.multicast_group.api import AsyncMulticastGroups, SyncMulticastGroups
+from machineq.core.multicast_group.api import AsyncMulticastGroups
 from machineq.core.multicast_group.models import MulticastGroupType
 from tests.sample_data.common import random_deveui, random_gateway_id, random_mac_address, random_name
 
 
 @pytest.fixture
-def multicast_groups_api(client) -> SyncMulticastGroups | AsyncMulticastGroups:
+def multicast_groups_api(client: AsyncTestClient) -> AsyncMulticastGroups:
     """Get multicast groups API resource from whichever client was requested."""
     return client.multicast_groups
 
@@ -23,7 +24,7 @@ def multicast_groups_api(client) -> SyncMulticastGroups | AsyncMulticastGroups:
 class TestMulticastGroups:
     """Multicast Group API tests."""
 
-    async def test_get_all(self, multicast_groups_api):
+    async def test_get_all(self, multicast_groups_api: AsyncMulticastGroups):
         """Test listing all multicast groups."""
         await multicast_groups_api.get_all()
 

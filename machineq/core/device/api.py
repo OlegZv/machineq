@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
+from machineq.core.device import DevicePayload
 from machineq.core.device.models import (
     DeviceCreate,
     DeviceCreateResponse,
@@ -148,7 +149,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         deveui: str,
         start_time: str | None = None,
         end_time: str | None = None,
-    ):
+    ) -> list[DevicePayload]:
         """Retrieve device payloads within a time range.
 
         Args:
@@ -172,7 +173,7 @@ class SyncDevices(BaseResource["SyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return DevicePayloadResponse(**data)
+        return DevicePayloadResponse(**data).payloads
 
     def get_health(self) -> DevicesHealthResponse:
         """Retrieve devices grouped by health status.
@@ -185,7 +186,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         data = self._parse_response(response)
         return DevicesHealthResponse(**data)
 
-    def get_health_count(self):
+    def get_health_count(self) -> DevicesHealthCountResponse:
         """Retrieve device count grouped by health status.
 
         Returns:
@@ -321,7 +322,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         deveui: str,
         start_time: str | None = None,
         end_time: str | None = None,
-    ):
+    ) -> list[DevicePayload]:
         """Retrieve device payloads within a time range.
 
         Args:
@@ -330,7 +331,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             end_time: Optional ISO 8601 formatted end time.
 
         Returns:
-            DevicePayloadResponse: The device payloads within the specified time range.
+            list[DevicePayload]: The device payloads within the specified time range.
         """
         url = self._build_url(f"{deveui}/payloads")
         params = {}
@@ -345,9 +346,9 @@ class AsyncDevices(BaseResource["AsyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return DevicePayloadResponse(**data)
+        return DevicePayloadResponse(**data).payloads
 
-    async def get_health(self):
+    async def get_health(self) -> DevicesHealthResponse:
         """Retrieve devices grouped by health status.
 
         Returns:
@@ -358,7 +359,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         data = self._parse_response(response)
         return DevicesHealthResponse(**data)
 
-    async def get_health_count(self):
+    async def get_health_count(self) -> DevicesHealthCountResponse:
         """Retrieve device count grouped by health status.
 
         Returns:

@@ -3,6 +3,8 @@
 import asyncio
 
 import pytest
+from async_test_client import AsyncTestClient
+from conftest import ProfileGetter
 from sample_data.common import (
     random_deveui,
     random_hex,
@@ -11,7 +13,7 @@ from sample_data.common import (
 
 from machineq import APIError
 from machineq.core.device import DeviceMessage
-from machineq.core.device.api import AsyncDevices, SyncDevices
+from machineq.core.device.api import AsyncDevices
 from machineq.core.device.models import (
     ActivationType,
     DeviceCreate,
@@ -22,7 +24,7 @@ from machineq.core.output_profile import OutputProfileCreate
 
 
 @pytest.fixture
-def devices_api(client) -> SyncDevices | AsyncDevices:
+def devices_api(client: AsyncTestClient) -> AsyncDevices:
     """Get devices API resource from whichever client is requested."""
     return client.devices
 
@@ -31,11 +33,11 @@ def devices_api(client) -> SyncDevices | AsyncDevices:
 class TestDevices:
     """Device API tests."""
 
-    async def test_get_all(self, devices_api):
+    async def test_get_all(self, devices_api: AsyncDevices):
         """Test listing all devices."""
         await devices_api.get_all()
 
-    async def test_get_existing_device(self, devices_api):
+    async def test_get_existing_device(self, devices_api: AsyncDevices):
         """Test retrieving a specific device."""
         devices = await devices_api.get_all()
         if devices:
@@ -43,7 +45,13 @@ class TestDevices:
             result = await devices_api.get(deveui)
             assert result.deveui == deveui
 
-    async def test_create_and_delete(self, devices_api: AsyncDevices, client, get_service_profile, get_device_profile):
+    async def test_create_and_delete(
+        self,
+        devices_api: AsyncDevices,
+        client: AsyncTestClient,
+        get_service_profile: ProfileGetter,
+        get_device_profile: ProfileGetter,
+    ):
         """Test creating and deleting a device."""
         deveui = random_deveui()
         data = DeviceCreate(
@@ -73,7 +81,13 @@ class TestDevices:
         finally:
             await devices_api.delete(deveui)
 
-    async def test_get_health(self, devices_api, client, get_service_profile, get_device_profile):
+    async def test_get_health(
+        self,
+        devices_api: AsyncDevices,
+        client: AsyncTestClient,
+        get_service_profile: ProfileGetter,
+        get_device_profile: ProfileGetter,
+    ):
         """Test getting device health. Create a device and check it appears in the offline list."""
         deveui = random_deveui()
         data = DeviceCreate(
@@ -96,12 +110,18 @@ class TestDevices:
         finally:
             await devices_api.delete(deveui)
 
-    async def test_get_health_count(self, devices_api):
+    async def test_get_health_count(self, devices_api: AsyncDevices):
         """Test getting device health count."""
         await devices_api.get_health_count()
         # for now just checking the response is returned and parsed
 
-    async def test_devices_update_and_patch(self, devices_api, client, get_service_profile, get_device_profile):
+    async def test_devices_update_and_patch(
+        self,
+        devices_api: AsyncDevices,
+        client: AsyncTestClient,
+        get_service_profile: ProfileGetter,
+        get_device_profile: ProfileGetter,
+    ):
         """Test updating and patching a device by creating and then modifying it."""
         deveui = random_deveui()
         data = DeviceCreate(

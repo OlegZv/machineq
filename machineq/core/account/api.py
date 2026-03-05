@@ -6,11 +6,8 @@ from typing import TYPE_CHECKING
 
 from machineq.client.base import BaseResource
 from machineq.core.account.models import (
-    AccountPasswordReset,
     AccountPermissionResponse,
     AccountResponse,
-    UserInfoPatch,
-    UserInfoUpdate,
 )
 
 if TYPE_CHECKING:
@@ -46,60 +43,6 @@ class SyncAccount(BaseResource["SyncClient"]):
         data = self._parse_response(response)
         return AccountPermissionResponse(**data)
 
-    def patch_user_info(self, data: UserInfoPatch) -> AccountResponse:
-        """Partially update the current user's information.
-
-        Args:
-            data: Partial user information to update.
-
-        Returns:
-            AccountResponse: The updated account information.
-        """
-        url = self._build_url("patchUserInfo")
-        response = self.client.http_client.patch(
-            url,
-            content=self._serialize_request_data(data),
-            headers=self._build_headers(),
-        )
-        result = self._parse_response(response)
-        return AccountResponse(**result)
-
-    def update_user_info(self, data: UserInfoUpdate) -> AccountResponse:
-        """Update the current user's full information.
-
-        Args:
-            data: Complete user information for replacement.
-
-        Returns:
-            AccountResponse: The updated account information.
-        """
-        url = self._build_url("updateUserInfo")
-        response = self.client.http_client.put(
-            url,
-            content=self._serialize_request_data(data),
-            headers=self._build_headers(),
-        )
-        result = self._parse_response(response)
-        return AccountResponse(**result)
-
-    def password_reset(self, data: AccountPasswordReset) -> AccountResponse:
-        """Change the current user's password.
-
-        Args:
-            data: Password reset data containing old and new passwords.
-
-        Returns:
-            AccountResponse: The updated account information.
-        """
-        url = self._build_url("passwordReset")
-        response = self.client.http_client.put(
-            url,
-            content=self._serialize_request_data(data),
-            headers=self._build_headers(),
-        )
-        result = self._parse_response(response)
-        return AccountResponse(**result)
-
 
 class AsyncAccount(BaseResource["AsyncClient"]):
     """Async account resource for user account operations."""
@@ -128,57 +71,3 @@ class AsyncAccount(BaseResource["AsyncClient"]):
         response = await self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return AccountPermissionResponse(**data)
-
-    async def patch_user_info(self, data: UserInfoPatch) -> AccountResponse:
-        """Partially update the current user's information.
-
-        Args:
-            data: Partial user information to update.
-
-        Returns:
-            AccountResponse: The updated account information.
-        """
-        url = self._build_url("patchUserInfo")
-        response = await self.client.http_client.patch(
-            url,
-            content=self._serialize_request_data(data),
-            headers=self._build_headers(),
-        )
-        result = self._parse_response(response)
-        return AccountResponse(**result)
-
-    async def update_user_info(self, data: UserInfoUpdate) -> AccountResponse:
-        """Update the current user's full information.
-
-        Args:
-            data: Complete user information for replacement.
-
-        Returns:
-            AccountResponse: The updated account information.
-        """
-        url = self._build_url("updateUserInfo")
-        response = await self.client.http_client.put(
-            url,
-            content=self._serialize_request_data(data),
-            headers=self._build_headers(),
-        )
-        result = self._parse_response(response)
-        return AccountResponse(**result)
-
-    async def password_reset(self, data: AccountPasswordReset) -> AccountResponse:
-        """Change the current user's password.
-
-        Args:
-            data: Password reset data containing old and new passwords.
-
-        Returns:
-            AccountResponse: The updated account information.
-        """
-        url = self._build_url("passwordReset")
-        response = await self.client.http_client.put(
-            url,
-            content=self._serialize_request_data(data),
-            headers=self._build_headers(),
-        )
-        result = self._parse_response(response)
-        return AccountResponse(**result)

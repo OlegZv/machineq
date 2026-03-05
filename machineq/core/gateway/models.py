@@ -268,6 +268,6 @@ class MachineqapiGatewayResponse(BaseModelWithConfig):
     gateways: list[GatewayInstance]
 
 
-class MachineqapiGetGatewayEventsResponse(BaseModelWithConfig):
+class GatewayEventsResponse(BaseModelWithConfig):
     node_id: str = Field(alias="NodeID")
     events: list[GatewayEvent]

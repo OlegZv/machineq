@@ -1,6 +1,8 @@
 """Tests for Output Profile API."""
 
 import pytest
+from async_test_client import AsyncTestClient
+from conftest import ProfileGetter
 from sample_data.common import random_deveui, random_name, random_password
 
 from machineq.core.device.models import ActivationType, DeviceCreate
@@ -10,7 +12,7 @@ from machineq.core.output_profile import (
     OutputProfileMQTTParams,
     OutputProfileRestParams,
 )
-from machineq.core.output_profile.api import AsyncOutputProfiles, SyncOutputProfiles
+from machineq.core.output_profile.api import AsyncOutputProfiles
 from machineq.core.output_profile.models import (
     OutputProfileCreate,
     OutputProfileDevicesUpdate,
@@ -20,7 +22,7 @@ from machineq.core.output_profile.models import (
 
 
 @pytest.fixture
-def output_profiles_api(client) -> SyncOutputProfiles | AsyncOutputProfiles:
+def output_profiles_api(client: AsyncTestClient) -> AsyncOutputProfiles:
     """Get output profiles API resource from whichever client was requested."""
     return client.output_profiles
 
@@ -29,11 +31,11 @@ def output_profiles_api(client) -> SyncOutputProfiles | AsyncOutputProfiles:
 class TestOutputProfiles:
     """Output Profile API tests."""
 
-    async def test_get_all(self, output_profiles_api):
+    async def test_get_all(self, output_profiles_api: AsyncOutputProfiles):
         """Test listing all output profiles."""
         await output_profiles_api.get_all()
 
-    async def test_create_and_delete(self, output_profiles_api):
+    async def test_create_and_delete(self, output_profiles_api: AsyncOutputProfiles):
         """Test creating and deleting an output profile."""
         create_name = random_name()
         data = OutputProfileCreate(name=create_name)
@@ -51,7 +53,7 @@ class TestOutputProfiles:
         finally:
             await output_profiles_api.delete(profile_id)
 
-    async def test_output_profiles_update_and_patch(self, output_profiles_api):
+    async def test_output_profiles_update_and_patch(self, output_profiles_api: AsyncOutputProfiles):
         """Test updating and patching an output profile."""
         create_name = random_name()
         mqtt = OutputProfileMQTTParams(
@@ -132,10 +134,10 @@ class TestOutputProfiles:
 
     async def test_output_profiles_update_devices_put(
         self,
-        output_profiles_api,
-        client,
-        get_service_profile,
-        get_device_profile,
+        output_profiles_api: AsyncOutputProfiles,
+        client: AsyncTestClient,
+        get_service_profile: ProfileGetter,
+        get_device_profile: ProfileGetter,
     ):
         """Test update_devices (PUT) for output profiles to associate devices."""
         data = OutputProfileCreate(name=random_name())
@@ -176,7 +178,9 @@ class TestOutputProfiles:
             )
             patched = await output_profiles_api.add_devices(profile_id, patch_data)
 
-            def assert_response_success(response: OutputProfileDevicesUpdateResponse, expected_deveuis: list[str]):
+            def assert_response_success(
+                response: OutputProfileDevicesUpdateResponse, expected_deveuis: list[str]
+            ) -> None:
                 assert len(response.responses) == len(expected_deveuis)
                 for resp, expected_deveui in zip(response.responses, expected_deveuis, strict=True):
                     assert resp.deveui == expected_deveui

@@ -3,12 +3,13 @@
 from datetime import datetime, timedelta
 
 import pytest
+from async_test_client import AsyncTestClient
 
-from machineq.core.logs.api import AsyncLogs, SyncLogs
+from machineq.core.logs.api import AsyncLogs
 
 
 @pytest.fixture
-def logs_api(client) -> SyncLogs | AsyncLogs:
+def logs_api(client: AsyncTestClient) -> AsyncLogs:
     """Get logs API resource from whichever client was requested."""
     return client.logs
 
@@ -17,19 +18,19 @@ def logs_api(client) -> SyncLogs | AsyncLogs:
 class TestLogs:
     """Logs API tests."""
 
-    async def test_get_all_no_filter(self, logs_api):
+    async def test_get_all_no_filter(self, logs_api: AsyncLogs):
         """Test getting logs without filters."""
         logs = await logs_api.get_all()
         assert len(logs) > 0
 
-    async def test_get_all_with_device_filter(self, logs_api, client):
+    async def test_get_all_with_device_filter(self, logs_api: AsyncLogs, client: AsyncTestClient):
         """Test getting logs filtered by device EUI."""
         devices = await client.devices.get_all()
         if devices:
             deveui = devices[0].deveui
             await logs_api.get_all(deveui=deveui)
 
-    async def test_get_all_time_filter(self, logs_api):
+    async def test_get_all_time_filter(self, logs_api: AsyncLogs):
         """Test getting logs without filters."""
         # timezone intentionally naive
         now = datetime.now()

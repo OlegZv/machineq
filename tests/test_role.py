@@ -1,17 +1,18 @@
 """Tests for Role API."""
 
 import pytest
+from async_test_client import AsyncTestClient
 from sample_data.common import random_email, random_name, random_password
 
 from machineq.core.account import PermissionObject
 from machineq.core.application import ApplicationCreate
-from machineq.core.role.api import AsyncRoles, SyncRoles
+from machineq.core.role.api import AsyncRoles
 from machineq.core.role.models import RoleCreate, RolePatch, RoleUpdate
 from machineq.core.users import UserCreate
 
 
 @pytest.fixture
-def roles_api(client) -> SyncRoles | AsyncRoles:
+def roles_api(client: AsyncTestClient) -> AsyncRoles:
     """Get roles API resource from whichever client was requested."""
     return client.roles
 
@@ -37,12 +38,12 @@ def verify_permissions(
 class TestRoles:
     """Role API tests."""
 
-    async def test_get_all(self, roles_api):
+    async def test_get_all(self, roles_api: AsyncRoles):
         """Test listing all roles."""
         result = await roles_api.get_all()
         assert len(result) > 0
 
-    async def test_create_and_delete(self, roles_api):
+    async def test_create_and_delete(self, roles_api: AsyncRoles):
         """Test creating and deleting a role."""
         data = RoleCreate(name=random_name())
         role_id = await roles_api.create(data)
@@ -56,7 +57,7 @@ class TestRoles:
         finally:
             await roles_api.delete(role_id)
 
-    async def test_role_update_and_patch(self, roles_api):
+    async def test_role_update_and_patch(self, roles_api: AsyncRoles):
         """Test updating and patching a role."""
         # all permissions are off
         data = RoleCreate(name=random_name())
@@ -109,7 +110,7 @@ class TestRoles:
         finally:
             await roles_api.delete(role_id)
 
-    async def test_create_update_patch_user_app(self, client):
+    async def test_create_update_patch_user_app(self, client: AsyncTestClient):
         """This test checks that we can create a role, assign it to a user (at create),
         reassign to the app only (update), then assign to both (patch)"""
         role = None

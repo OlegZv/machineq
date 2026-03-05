@@ -1,12 +1,13 @@
 """Tests for Gateway Profile API."""
 
 import pytest
+from async_test_client import AsyncTestClient
 
-from machineq.core.gateway_profile.api import AsyncGatewayProfiles, SyncGatewayProfiles
+from machineq.core.gateway_profile.api import AsyncGatewayProfiles
 
 
 @pytest.fixture
-def gateway_profiles_api(client) -> SyncGatewayProfiles | AsyncGatewayProfiles:
+def gateway_profiles_api(client: AsyncTestClient) -> AsyncGatewayProfiles:
     """Get gateway profiles API resource."""
     return client.gateway_profiles
 
@@ -15,7 +16,7 @@ def gateway_profiles_api(client) -> SyncGatewayProfiles | AsyncGatewayProfiles:
 class TestGatewayProfiles:
     """Gateway Profile API tests."""
 
-    async def test_get_all(self, gateway_profiles_api):
+    async def test_get_all(self, gateway_profiles_api: AsyncGatewayProfiles):
         """Test listing all gateway profiles."""
         result = await gateway_profiles_api.get_all()
         assert len(result) > 0

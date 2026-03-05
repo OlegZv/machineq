@@ -1,15 +1,16 @@
 """Tests for Gateway Group API."""
 
 import pytest
+from async_test_client import AsyncTestClient
 from sample_data.common import random_gateway_id, random_mac_address, random_name
 
 from machineq.core.gateway import Coordinates, GatewayCreate
-from machineq.core.gateway_group.api import AsyncGatewayGroups, SyncGatewayGroups
+from machineq.core.gateway_group.api import AsyncGatewayGroups
 from machineq.core.gateway_group.models import GatewayGroupCreate, GatewayGroupPatch, GatewayGroupUpdate
 
 
 @pytest.fixture
-def gateway_groups_api(client) -> SyncGatewayGroups | AsyncGatewayGroups:
+def gateway_groups_api(client: AsyncTestClient) -> AsyncGatewayGroups:
     """Get gateway groups API resource."""
     return client.gateway_groups
 
@@ -18,11 +19,11 @@ def gateway_groups_api(client) -> SyncGatewayGroups | AsyncGatewayGroups:
 class TestGatewayGroups:
     """Gateway Group API tests."""
 
-    async def test_get_all(self, gateway_groups_api):
+    async def test_get_all(self, gateway_groups_api: AsyncGatewayGroups):
         """Test listing all gateway groups."""
         await gateway_groups_api.get_all()
 
-    async def test_create_and_delete(self, gateway_groups_api):
+    async def test_create_and_delete(self, gateway_groups_api: AsyncGatewayGroups):
         """Test creating and deleting a gateway group."""
         data = GatewayGroupCreate(name=random_name(), gateway_list=[])
         group_id = await gateway_groups_api.create(data)
@@ -33,7 +34,7 @@ class TestGatewayGroups:
         finally:
             await gateway_groups_api.delete(group_id)
 
-    async def test_gateway_groups_update_and_patch(self, gateway_groups_api):
+    async def test_gateway_groups_update_and_patch(self, gateway_groups_api: AsyncGatewayGroups):
         """Test updating and patching a gateway group."""
         data = GatewayGroupCreate(name=random_name(), gateway_list=[])
         group_id = await gateway_groups_api.create(data)

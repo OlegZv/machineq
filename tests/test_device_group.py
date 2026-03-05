@@ -1,16 +1,18 @@
 """Tests for Device Group API."""
 
 import pytest
+from async_test_client import AsyncTestClient
+from conftest import ProfileGetter
 from sample_data.common import random_deveui, random_name
 
 from machineq.core.device import DeviceCreate
 from machineq.core.device.models import ActivationType
-from machineq.core.device_group.api import AsyncDeviceGroups, SyncDeviceGroups
+from machineq.core.device_group.api import AsyncDeviceGroups
 from machineq.core.device_group.models import DeviceGroupCreate, DeviceGroupPatch, DeviceGroupUpdate
 
 
 @pytest.fixture
-def device_groups_api(client) -> SyncDeviceGroups | AsyncDeviceGroups:
+def device_groups_api(client: AsyncTestClient) -> AsyncDeviceGroups:
     """Get device groups API resource."""
     return client.device_groups
 
@@ -19,11 +21,11 @@ def device_groups_api(client) -> SyncDeviceGroups | AsyncDeviceGroups:
 class TestDeviceGroups:
     """Device Group API tests."""
 
-    async def test_get_all(self, device_groups_api):
+    async def test_get_all(self, device_groups_api: AsyncDeviceGroups):
         """Test listing all device groups."""
         _groups = await device_groups_api.get_all()
 
-    async def test_create_and_delete(self, device_groups_api):
+    async def test_create_and_delete(self, device_groups_api: AsyncDeviceGroups):
         """Test creating and deleting a device group."""
         data = DeviceGroupCreate(name=random_name(), device_list=[])
         group_id = await device_groups_api.create(data)
@@ -39,9 +41,9 @@ class TestDeviceGroups:
 
     async def test_device_groups_update_and_patch(
         self,
-        device_groups_api,
-        get_service_profile,
-        get_device_profile,
+        device_groups_api: AsyncDeviceGroups,
+        get_service_profile: ProfileGetter,
+        get_device_profile: ProfileGetter,
     ):
         """Test updating and patching a device group."""
         data = DeviceGroupCreate(name=random_name(), device_list=[])

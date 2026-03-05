@@ -43,14 +43,14 @@ class BaseResource(Generic[ClientType]):
         self.extra_prefix = client.extra_prefix
         self.base_path = base_path
 
-    def get_all_generic(self: BaseResource[SyncClient]) -> dict[str, Any]:
+    def get_all_generic(self: BaseResource[SyncClient]) -> Any:  # noqa: ANN401
         """Common function for get_all, returns parsed json"""
         url = self._build_url()
         response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return data
 
-    async def get_all_generic_async(self: BaseResource[AsyncClient]) -> dict[str, Any]:
+    async def get_all_generic_async(self: BaseResource[AsyncClient]) -> Any:  # noqa: ANN401
         """Common function for get_all, returns parsed json"""
         url = self._build_url()
         response = await self.client.http_client.get(url, headers=self._build_headers())
@@ -78,8 +78,12 @@ class BaseResource(Generic[ClientType]):
             return f"{self.base_url}{self.base_path}/{path}"
         return f"{self.base_url}{self.base_path}"
 
+    # the actual return type for this call is None | list | dict | str
+    # but then subsequent calls to try and serialize it, like SomeModel(**data)
+    # fail type check, since it can only do that with a dict. Long term a better
+    # way would be to possibly pass a type instance and return that type instance.
     @staticmethod
-    def _parse_response(response: httpx.Response) -> Any:
+    def _parse_response(response: httpx.Response) -> Any:  # noqa: ANN401
         """Parse JSON response.
 
         Args:
@@ -129,7 +133,7 @@ class BaseResource(Generic[ClientType]):
         }
 
     @staticmethod
-    def _serialize_request_data(data: Any) -> str:
+    def _serialize_request_data(data: BaseModel | dict) -> str:
         """Serialize request data to JSON.
 
         Args:

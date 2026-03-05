@@ -125,7 +125,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         payload: str | None = None,
         start_time: str | None = None,
         end_time: str | None = None,
-    ):
+    ) -> list[str]:
         """Retrieve devices with recent data in a group.
 
         Args:
@@ -135,7 +135,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             end_time: Optional ISO 8601 formatted end time.
 
         Returns:
-            GetDeviceGroupRecentResponse: Devices with recent data in the group.
+            list[str]: Devices with recent data in the group.
         """
         url = self._build_url(f"{group_id}/recent")
         params = {}
@@ -152,7 +152,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return GetDeviceGroupRecentResponse(**data)
+        return GetDeviceGroupRecentResponse(**data).device_list
 
 
 class AsyncDeviceGroups(BaseResource["AsyncClient"]):
@@ -259,7 +259,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         payload: str | None = None,
         start_time: str | None = None,
         end_time: str | None = None,
-    ):
+    ) -> list[str]:
         """Retrieve devices with recent data in a group.
 
         Args:
@@ -269,7 +269,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             end_time: Optional ISO 8601 formatted end time.
 
         Returns:
-            GetDeviceGroupRecentResponse: Devices with recent data in the group.
+            list[str]: Devices with recent data in the group.
         """
         url = self._build_url(f"{group_id}/recent")
         params = {}
@@ -286,4 +286,4 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
             headers=self._build_headers(),
         )
         data = self._parse_response(response)
-        return GetDeviceGroupRecentResponse(**data)
+        return GetDeviceGroupRecentResponse(**data).device_list

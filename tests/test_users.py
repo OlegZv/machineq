@@ -3,14 +3,15 @@
 import logging
 
 import pytest
+from async_test_client import AsyncTestClient
 from sample_data.common import random_email, random_name, random_password
 
-from machineq.core.users.api import AsyncUsers, SyncUsers
+from machineq.core.users.api import AsyncUsers
 from machineq.core.users.models import UserCreate, UserPatch, UserUpdate
 
 
 @pytest.fixture
-def users_api(client) -> SyncUsers | AsyncUsers:
+def users_api(client: AsyncTestClient) -> AsyncUsers:
     """Get users API resource from whichever client was requested."""
     return client.users
 
@@ -19,11 +20,11 @@ def users_api(client) -> SyncUsers | AsyncUsers:
 class TestUsers:
     """Users API tests."""
 
-    async def test_get_all(self, users_api):
+    async def test_get_all(self, users_api: AsyncUsers):
         """Test listing all users."""
         await users_api.get_all()
 
-    async def test_create_and_delete(self, users_api):
+    async def test_create_and_delete(self, users_api: AsyncUsers):
         """Test creating and deleting a user."""
         data = UserCreate(
             email=random_email(),
@@ -42,7 +43,7 @@ class TestUsers:
         finally:
             await users_api.delete(user_id)
 
-    async def test_users_update_full(self, users_api):
+    async def test_users_update_full(self, users_api: AsyncUsers):
         """Test updating a user (full replacement) and verifying the result."""
         # create initial user
         data = UserCreate(
@@ -106,7 +107,7 @@ class TestUsers:
         finally:
             await users_api.delete(user_id)
 
-    async def roles(self, user_api) -> list[str]:
+    async def roles(self, user_api: AsyncUsers) -> list[str]:
         """Helper to get an existing role for update payload."""
         roles = await user_api.client.roles.get_all()
         if not roles:

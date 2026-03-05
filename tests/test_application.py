@@ -3,18 +3,19 @@
 import asyncio
 
 import pytest
+from async_test_client import AsyncTestClient
 from sample_data.common import random_name
 
 from machineq import MqAuth
 from machineq.auth import AuthenticationException
 from machineq.client.sync import SyncClient
 from machineq.core.application import ApplicationPatch, ApplicationUpdate
-from machineq.core.application.api import AsyncApplications, SyncApplications
+from machineq.core.application.api import AsyncApplications
 from machineq.core.application.models import ApplicationCreate
 
 
 @pytest.fixture
-def applications_api(client) -> SyncApplications | AsyncApplications:
+def applications_api(client: AsyncTestClient) -> AsyncApplications:
     """Get applications API resource."""
     return client.applications
 
@@ -23,13 +24,13 @@ def applications_api(client) -> SyncApplications | AsyncApplications:
 class TestApplications:
     """Application API tests."""
 
-    async def test_get_all(self, applications_api):
+    async def test_get_all(self, applications_api: AsyncApplications):
         """Test listing all applications."""
         result = await applications_api.get_all()
         # these tests run through an application so at least one should be there
         assert len(result) > 0
 
-    async def test_create_and_delete(self, applications_api):
+    async def test_create_and_delete(self, applications_api: AsyncApplications):
         """Test creating and deleting an application."""
         # first get any role to assocaite with the application
         role_id = await self.get_a_role(applications_api)
@@ -94,7 +95,7 @@ class TestApplications:
         finally:
             await applications_api.delete(application.id)
 
-    async def test_refresh(self, applications_api):
+    async def test_refresh(self, applications_api: AsyncApplications):
         """Test refreshing an application's token."""
         # create an application to refresh
         role = await self.get_a_role(applications_api)
@@ -131,7 +132,7 @@ class TestApplications:
         finally:
             await applications_api.delete(application.id)
 
-    async def get_a_role(self, applications_api) -> str:
+    async def get_a_role(self, applications_api: AsyncApplications) -> str:
         """Helper to get a role ID for testing."""
         roles = await applications_api.client.roles.get_all()
         assert len(roles) > 0

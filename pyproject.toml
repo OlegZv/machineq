@@ -2,7 +2,9 @@
 name = "machineq"
 dynamic = ["version"]
 description = "Python package to access MachineQ APIs"
-authors = [{ name = "Oleg Zvonarov", email = "19969581+OlegZv@users.noreply.github.com" }]
+authors = [
+    { name = "Oleg Zvonarov", email = "19969581+OlegZv@users.noreply.github.com" },
+]
 readme = "README.md"
 keywords = ['python']
 requires-python = ">=3.10,<4.0"
@@ -17,10 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = [
-    "httpx==0.28.1",
-    "pydantic==2.12.5",
-]
+dependencies = ["httpx==0.28.1", "pydantic==2.12.5"]
 
 [project.urls]
 Homepage = "https://github.com/OlegZv/machineq"
@@ -81,7 +80,8 @@ select = [
     # mccabe
     "C90",
     # pycodestyle
-    "E", "W",
+    "E",
+    "W",
     # pyflakes
     "F",
     # pygrep-hooks
@@ -92,6 +92,8 @@ select = [
     "RUF",
     # tryceratops
     "TRY",
+    # flake8-annotations
+    "ANN",
 ]
 ignore = [
     # LineTooLong
@@ -101,7 +103,15 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
+"tests/*" = [
+    # allow using assert
+    "S101",
+    # tests often don't return anything
+    "ANN201",
+]
+
+[tool.ruff.lint.flake8-annotations]
+mypy-init-return = true
 
 [tool.ruff.format]
 preview = true

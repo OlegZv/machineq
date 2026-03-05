@@ -1,13 +1,14 @@
 """Tests for Decoder Type API."""
 
 import pytest
+from async_test_client import AsyncTestClient
 
 
 @pytest.mark.asyncio
 class TestDecoderTypes:
     """Decoder Type API tests."""
 
-    async def test_get_all(self, client):
+    async def test_get_all(self, client: AsyncTestClient):
         """Test listing all decoder types."""
         result = await client.decoder_types.get_all()
         assert len(result) > 0
@@ -15,7 +16,7 @@ class TestDecoderTypes:
         assert result[0].name
         assert result[0].payload_decoder
 
-    async def test_get_existing(self, client):
+    async def test_get_existing(self, client: AsyncTestClient):
         """Test retrieving a specific decoder type."""
         all_types = await client.decoder_types.get_all()
         if all_types:
