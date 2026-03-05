@@ -119,7 +119,7 @@ class TestApplications:
             # test refresh
             new_secret = await applications_api.refresh_token(application.id)
             assert new_secret != application.client_secret
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             # ensure the new secret works
             new_client = SyncClient(application.UUID, new_secret)
             response = new_client.account.get()
