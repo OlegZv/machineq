@@ -121,3 +121,17 @@ Before you submit a pull request, check that it meets these guidelines:
 
 2. If the pull request adds functionality, the docs should be updated.
    Put your new functionality into a function with a docstring, and add the feature to the list in `README.md`.
+
+## Documentation
+
+This project uses [Zensical](https://zensical.org/docs/get-started/) for building the documentation. The actual documentation is served through Read the Docs.
+
+Full documentation (Quickstart, sync/async usage, and API Reference) is available on Read the Docs:
+<https://machineq.readthedocs.io/en/latest/>.
+
+To work with the docs locally:
+
+- `make docs` builds the site using Zensical and MkDocs configuration.
+- `make docs serve` builds and serves the docs for local preview.
+
+> Note: if you're changing `mkdocstrings` config, you most likely need to clear cache for the changes to take effect. For example `rm -rf .cache && sleep 1 && make docs serve`

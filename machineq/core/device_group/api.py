@@ -35,7 +35,7 @@ class SyncDeviceGroups(BaseResource["SyncClient"]):
         Returns:
             list[DeviceGroupInstance]: List of all device group instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return DeviceGroupResponse(**data).device_groups
 
     def get(self, group_id: str) -> DeviceGroupInstance:
@@ -171,7 +171,7 @@ class AsyncDeviceGroups(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceGroupInstance]: List of all device group instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return DeviceGroupResponse(**data).device_groups
 
     async def get(self, group_id: str) -> DeviceGroupInstance:

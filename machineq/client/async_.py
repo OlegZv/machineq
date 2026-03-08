@@ -43,7 +43,8 @@ class AsyncClient:
         Args:
             client_id: OAuth client ID
             client_secret: OAuth client secret
-            base_url: Base URL for API (default: production v1)
+            version: version of the API to use (default: v1)
+            extra_prefix: extra prefix between the /{api_version} and {endpoint}. May be useful for some deprecated APIs.
             env: API environment (default: production)
         """
         # Create auth with a sync client (token refresh is always synchronous)

@@ -53,8 +53,12 @@ class GatewayList(BaseModelWithConfig):
     SNR: str
     ESP: str
     time: str
-    unowned: bool
-    subscriber_id: str = Field(alias="SubscriberID")
+    unowned: bool = False
+    """This flag will be true when the primary gateway is not owned by the same subscriber as the one initiating
+    the API request. Note that MachineQ uses unowned and not owned because they want the default value, i.e. false, to be
+    omitted in the JSON.
+    """
+    subscriber_id: str = Field(alias="SubscriberID", default="")
     gateway_node_id: str = Field(alias="GatewayNodeID")
 
 
@@ -93,7 +97,11 @@ class LogInstance(BaseModelWithConfig):
     late: str
     dev_nonce: str
     join_eui: str = Field(alias="JoinEUI")
-    gateway_unowned: bool
+    gateway_unowned: bool = False
+    """This flag will be true when the primary gateway is not owned by the same subscriber as the one initiating
+    the API request. Note that MachineQ uses unowned and not owned because they want the default value, i.e. false, to be
+    omitted in the JSON.
+    """
     gateway_subscriber_id: str = ""  # possibly deprecated?
     gateway_node_id: str = Field(alias="GatewayNodeID")
     """Could be "Not Owned" or the NodeID"""

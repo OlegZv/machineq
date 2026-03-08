@@ -32,7 +32,7 @@ class SyncGatewayGroups(BaseResource["SyncClient"]):
         Returns:
             list[GatewayGroupInstance]: List of all gateway group instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return GatewayGroupResponse(**data).gateway_groups
 
     def get(self, group_id: str) -> GatewayGroupInstance:
@@ -131,7 +131,7 @@ class AsyncGatewayGroups(BaseResource["AsyncClient"]):
         Returns:
             list[GatewayGroupInstance]: List of all gateway group instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return GatewayGroupResponse(**data).gateway_groups
 
     async def get(self, group_id: str) -> GatewayGroupInstance:

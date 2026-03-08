@@ -34,7 +34,7 @@ class SyncOutputProfiles(BaseResource["SyncClient"]):
         Returns:
             list[OutputProfileInstance]: List of all output profile instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return OutputProfileResponse(**data).output_profiles
 
     def get(self, profile_id: str) -> OutputProfileInstance:
@@ -187,7 +187,7 @@ class AsyncOutputProfiles(BaseResource["AsyncClient"]):
         Returns:
             list[OutputProfileInstance]: List of all output profile instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return OutputProfileResponse(**data).output_profiles
 
     async def get(self, profile_id: str) -> OutputProfileInstance:

@@ -43,14 +43,14 @@ class BaseResource(Generic[ClientType]):
         self.extra_prefix = client.extra_prefix
         self.base_path = base_path
 
-    def get_all_generic(self: BaseResource[SyncClient]) -> Any:  # noqa: ANN401
+    def _get_all_generic(self: BaseResource[SyncClient]) -> Any:  # noqa: ANN401
         """Common function for get_all, returns parsed json"""
         url = self._build_url()
         response = self.client.http_client.get(url, headers=self._build_headers())
         data = self._parse_response(response)
         return data
 
-    async def get_all_generic_async(self: BaseResource[AsyncClient]) -> Any:  # noqa: ANN401
+    async def _get_all_generic_async(self: BaseResource[AsyncClient]) -> Any:  # noqa: ANN401
         """Common function for get_all, returns parsed json"""
         url = self._build_url()
         response = await self.client.http_client.get(url, headers=self._build_headers())
