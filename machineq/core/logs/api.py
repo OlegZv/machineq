@@ -38,7 +38,7 @@ class SyncLogs(BaseResource["SyncClient"]):
         """List logs with optional filtering.
 
         Args:
-            device_eui: Optional device EUI to filter by.
+            deveui: Optional device EUI to filter by.
             gateway_id: Optional gateway ID to filter by.
             start_time: Optional ISO 8601 formatted start time.
             end_time: Optional ISO 8601 formatted end time.

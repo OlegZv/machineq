@@ -1,0 +1,131 @@
+site_name: MachineQ Python Client
+site_url: https://machineq.readthedocs.io/en/latest/
+repo_url: https://github.com/OlegZv/machineq
+repo_name: OlegZv/machineq
+
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md]
+
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Usage:
+      - Clients: usage/clients.md
+  - API Reference:
+      - Authentication: api/auth.md
+      - Clients: api/client.md
+      - Account: api/account.md
+      - Application: api/application.md
+      - Decoder type: api/decoder_type.md
+      - Device: api/device.md
+      - Device group: api/device_group.md
+      - Device profile: api/device_profile.md
+      - Gateway: api/gateway.md
+      - Gateway group: api/gateway_group.md
+      - Gateway profile: api/gateway_profile.md
+      - Logs: api/logs.md
+      - Multicast group: api/multicast_group.md
+      - Output profile: api/output_profile.md
+      - RF region: api/rf_region.md
+      - Role: api/role.md
+      - Service profile: api/service_profile.md
+      - Users: api/users.md
+      - Version: api/version.md
+      - Data models:
+          - Shared: api/models/shared.md
+          - Account: api/models/account.md
+          - Application: api/models/application.md
+          - Decoder type: api/models/decoder_type.md
+          - Device: api/models/device.md
+          - Device group: api/models/device_group.md
+          - Device profile: api/models/device_profile.md
+          - Gateway: api/models/gateway.md
+          - Gateway group: api/models/gateway_group.md
+          - Gateway profile: api/models/gateway_profile.md
+          - Logs: api/models/logs.md
+          - Multicast group: api/models/multicast_group.md
+          - Output profile: api/models/output_profile.md
+          - RF region: api/models/rf_region.md
+          - Role: api/models/role.md
+          - Service profile: api/models/service_profile.md
+          - Users: api/models/users.md
+          - Version: api/models/version.md
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - navigation.instant.preview
+    - search.highlight
+    - toc.follow
+    - navigation.top
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: lucide/moon
+        name: Switch to light mode
+
+plugins:
+  - search
+  - autorefs:
+      link_titles: false
+  - markdown-exec
+  - section-index
+  - coverage
+  - material.extensions.preview
+  - mkdocstrings:
+      handlers:
+        python:
+          inventories:
+          - https://docs.python.org/3/objects.inv
+          paths: [.]
+          options:
+            show_if_no_docstring: true
+            backlinks: tree
+            inherited_members: false
+            docstring_options:
+              ignore_init_summary: true
+            docstring_section_style: list
+            filters: ["!^_"]
+            merge_init_into_class: true
+            parameter_headings: true
+            separate_signature: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            show_source: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            summary: true
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - footnotes
+  - pymdownx.details
+  - pymdownx.highlight:
+      pygments_lang_class: true
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - material.extensions.preview:
+      targets:
+        include:
+        - '*'

@@ -27,7 +27,7 @@ class SyncGatewayProfiles(BaseResource["SyncClient"]):
         Returns:
             list[GatewayProfileInstance]: List of all gateway profile instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return GatewayProfileResponse(**data).gateway_profiles
 
 
@@ -43,5 +43,5 @@ class AsyncGatewayProfiles(BaseResource["AsyncClient"]):
         Returns:
             list[GatewayProfileInstance]: List of all gateway profile instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return GatewayProfileResponse(**data).gateway_profiles

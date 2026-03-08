@@ -33,7 +33,7 @@ class SyncApplications(BaseResource["SyncClient"]):
         Returns:
             list[ApplicationInstance]: List of all application instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return ApplicationResponse(**data).applications
 
     def get(self, application_id: str) -> ApplicationInstance:
@@ -150,7 +150,7 @@ class AsyncApplications(BaseResource["AsyncClient"]):
         Returns:
             list[ApplicationInstance]: List of all application instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return ApplicationResponse(**data).applications
 
     async def get(self, application_id: str) -> ApplicationInstance:

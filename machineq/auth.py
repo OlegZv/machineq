@@ -36,7 +36,7 @@ class MqAuth:
     env: MqApiEnvironment = MqApiEnvironment.PROD
 
     expires_at: datetime = field(default_factory=lambda: datetime.now())
-    _token: str = field(default="", repr=False)
+    _token: str = field(default="", repr=False, init=False)
 
     def __post_init__(self) -> None:
         self.client.headers.update({"User-Agent": f"machineq-py/{__version__}"})
@@ -54,6 +54,7 @@ class MqAuth:
         return f"{self.oauth_host}/token"
 
     def refresh(self) -> None:
+        """Refresh the acccess token"""
         auth_params: dict[str, str] = {
             "grant_type": "client_credentials",
             "client_id": self.client_id,
@@ -72,6 +73,14 @@ class MqAuth:
 
     @property
     def token(self) -> str:
+        """Returns the token. If expired, will automatically renew.
+
+        Raises:
+            AuthenticationException: if the authentication fails
+
+        Returns:
+            str: the Bearer token, without `Bearer` prefix
+        """
         if not self._token or (self.expires_at < datetime.now() + timedelta(seconds=GRACE_PERIOD_S)):
             self.refresh()
         if not self._token:

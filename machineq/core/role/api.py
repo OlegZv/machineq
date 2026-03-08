@@ -28,7 +28,7 @@ class SyncRoles(BaseResource["SyncClient"]):
 
     def get_all(self) -> list[RoleInstance]:
         """List all roles."""
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return RoleResponse(**data).roles
 
     def get(self, role_id: str) -> RoleInstance:
@@ -86,7 +86,7 @@ class AsyncRoles(BaseResource["AsyncClient"]):
 
     async def get_all(self) -> list[RoleInstance]:
         """List all roles."""
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return RoleResponse(**data).roles
 
     async def get(self, role_id: str) -> RoleInstance:

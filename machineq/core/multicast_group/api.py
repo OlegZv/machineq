@@ -41,7 +41,7 @@ class SyncMulticastGroups(BaseResource["SyncClient"]):
         Returns:
             list[MulticastGroup]: List of all multicast group instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return GetMulticastGroupsResponse(**data).multicast_groups
 
     def get(self, multicast_deveui: str) -> MulticastGroup:
@@ -191,7 +191,7 @@ class AsyncMulticastGroups(BaseResource["AsyncClient"]):
         Returns:
             list[MulticastGroup]: List of all multicast group instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return GetMulticastGroupsResponse(**data).multicast_groups
 
     async def get(self, multicast_deveui: str) -> MulticastGroup:
