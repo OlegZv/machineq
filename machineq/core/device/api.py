@@ -39,7 +39,7 @@ class SyncDevices(BaseResource["SyncClient"]):
         Returns:
             list[DeviceInstance]: List of all device instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return DeviceResponse(**data).devices
 
     def get(self, deveui: str) -> DeviceInstance:
@@ -213,7 +213,7 @@ class AsyncDevices(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceInstance]: All device instances with response metadata.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return DeviceResponse(**data).devices
 
     async def get(self, deveui: str) -> DeviceInstance:

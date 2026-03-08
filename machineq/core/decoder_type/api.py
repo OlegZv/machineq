@@ -27,7 +27,7 @@ class SyncDecoderTypes(BaseResource["SyncClient"]):
         Returns:
             list[DecoderTypeInstance]: List of all decoder type instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return DecoderTypeResponse(**data).decoder_types
 
     def get(self, decoder_id: str) -> DecoderTypeInstance:
@@ -57,7 +57,7 @@ class AsyncDecoderTypes(BaseResource["AsyncClient"]):
         Returns:
             list[DecoderTypeInstance]: List of all decoder type instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return DecoderTypeResponse(**data).decoder_types
 
     async def get(self, decoder_id: str) -> DecoderTypeInstance:

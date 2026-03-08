@@ -29,7 +29,7 @@ class SyncDeviceProfiles(BaseResource["SyncClient"]):
         Returns:
             list[DeviceProfileInstance]: List of all device profile instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return DeviceProfileResponse(**data).device_profiles
 
     def update_devices(
@@ -68,7 +68,7 @@ class AsyncDeviceProfiles(BaseResource["AsyncClient"]):
         Returns:
             list[DeviceProfileInstance]: List of all device profile instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return DeviceProfileResponse(**data).device_profiles
 
     async def update_devices(

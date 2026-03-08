@@ -38,6 +38,16 @@ publish: ## Publish a release to PyPI.
 .PHONY: build-and-publish
 build-and-publish: build publish ## Build and publish.
 
+.PHONY: docs
+docs: ## Build documentation site with Zensical.
+	@echo "🚀 Building documentation with Zensical"
+	@uv run --group docs zensical build
+
+.PHONY: serve
+serve: docs ## Build and serve documentation locally.
+	@echo "🚀 Serving documentation with Zensical"
+	@uv run --group docs zensical serve
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \

@@ -38,7 +38,7 @@ class SyncGateways(BaseResource["SyncClient"]):
         Returns:
             list[GatewayInstance]: List of all gateway instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return MachineqapiGatewayResponse(**data).gateways
 
     def get(self, gateway_id: str) -> GatewayInstance:
@@ -231,7 +231,7 @@ class AsyncGateways(BaseResource["AsyncClient"]):
         Returns:
             list[GatewayInstance]: List of all gateway instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return MachineqapiGatewayResponse(**data).gateways
 
     async def get(self, gateway_id: str) -> GatewayInstance:

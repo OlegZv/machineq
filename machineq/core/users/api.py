@@ -32,7 +32,7 @@ class SyncUsers(BaseResource["SyncClient"]):
         Returns:
             list[UserInstance]: List of all user instances.
         """
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return UserResponse(**data).users
 
     def get(self, user_id: str) -> UserInstance:
@@ -131,7 +131,7 @@ class AsyncUsers(BaseResource["AsyncClient"]):
         Returns:
             list[UserInstance]: List of all user instances.
         """
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return UserResponse(**data).users
 
     async def get(self, user_id: str) -> UserInstance:

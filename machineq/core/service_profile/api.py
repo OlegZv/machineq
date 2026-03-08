@@ -23,7 +23,7 @@ class SyncServiceProfiles(BaseResource["SyncClient"]):
 
     def get_all(self) -> list[ServiceProfileInstance]:
         """List all service profiles."""
-        data = super().get_all_generic()
+        data = super()._get_all_generic()
         return ServiceProfilesResponse(**data).service_profiles
 
 
@@ -35,5 +35,5 @@ class AsyncServiceProfiles(BaseResource["AsyncClient"]):
 
     async def get_all(self) -> list[ServiceProfileInstance]:
         """List all service profiles."""
-        data = await super().get_all_generic_async()
+        data = await super()._get_all_generic_async()
         return ServiceProfilesResponse(**data).service_profiles

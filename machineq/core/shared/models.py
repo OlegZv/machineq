@@ -20,7 +20,7 @@ class BaseModelWithConfig(BaseModel):
     """Base model with common configuration for all models.
     Most of the time this config will be able to handle serializetion and deserialization
     for all models. Sometimes the alias would be different and can be overridden per field.
-    For exampke, deveui is mostly DevEUI."""
+    For example, deveui is mostly DevEUI."""
 
     model_config = ConfigDict(
         validate_by_name=True, validate_by_alias=True, serialize_by_alias=True, alias_generator=alias_generator
