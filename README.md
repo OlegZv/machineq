@@ -30,7 +30,7 @@ Recommended installation using `uv add machineq` (or via pip" `pip install machi
 
 ## Example Usage
 
-For more examples and API reference check out [the documentation](https://machineq.readthedocs.io/en/latest/).
+For more examples and API reference check out [the quickstart section](https://machineq.readthedocs.io/en/latest/quickstart/) and [usage](https://machineq.readthedocs.io/en/latest/usage/clients/).
 
 Here is a simple example of getting the list of devices on the subscriber using `SyncClient`:
 
