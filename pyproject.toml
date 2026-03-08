@@ -27,7 +27,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/OlegZv/machineq"
 Repository = "https://github.com/OlegZv/machineq"
-Documentation = "https://github.com/OlegZv/machineq"
+Documentation = "https://machineq.readthedocs.io/en/latest/"
 
 [dependency-groups]
 dev = [
