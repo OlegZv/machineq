@@ -26,16 +26,19 @@
 
 ## Installation
 
-Recommended installation using `uv add machineq`
+Recommended installation using `uv add machineq` (or via pip" `pip install machineq`)
 
 ## Example Usage
 
-More docs to come, for now here's a simple example on how to use the package:
+For more examples and API reference check out [the quickstart section](https://machineq.readthedocs.io/en/latest/quickstart/) and [usage](https://machineq.readthedocs.io/en/latest/usage/clients/).
+
+Here is a simple example of getting the list of devices on the subscriber using `SyncClient`:
+
 ```python
 from machineq import SyncClient
 
-client_id = ""
-client_secret = ""
+client_id = "your-client-id
+client_secret = "your-client-secret"
 
 client = SyncClient(client_id, client_secret)
 devices = client.devices.get_all()
