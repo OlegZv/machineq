@@ -47,7 +47,7 @@ docs = [
     "mkdocstrings",
     "mkdocstrings-python==2.0.3",
     "pymdown-extensions==10.21",
-    "zensical==0.0.29",
+    "zensical==0.0.30",
 ]
 
 [build-system]
