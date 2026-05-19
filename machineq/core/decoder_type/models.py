@@ -1,4 +1,5 @@
 import enum
+import warnings
 
 from machineq.core.shared.models import BaseModelWithConfig
 
@@ -40,8 +41,17 @@ class PayloadDecoderType(str, enum.Enum):
     MILESIGHT_CT303 = "MILESIGHT_CT303"
     MILESIGHT_WTS506 = "MILESIGHT_WTS506"
     MILESIGHT_UC300 = "MILESIGHT_UC300"
+    MILESIGHT_TS301 = "MILESIGHT_TS301"
+    MILESIGHT_GS601 = "MILESIGHT_GS601"
     GEORGIA_PACIFIC_KOLO_CLICK_SPINDLE = "GEORGIA_PACIFIC_KOLO_CLICK_SPINDLE"
     GEORGIA_PACIFIC_KOLO_CLICK_8AND10_TOWEL = "GEORGIA_PACIFIC_KOLO_CLICK_8AND10_TOWEL"
+    MIROMICO_MIRO_ALARM = "MIROMICO_MIRO_ALARM"
+
+    @classmethod
+    def _missing_(cls, value) -> "PayloadDecoderType":  # noqa: ANN001
+        """Prevent newly added decoders from breaking the parsing"""
+        warnings.warn(f"Unknown value '{value}' for enum {cls.__name__}. Using default.", UserWarning, stacklevel=1)
+        return cls.UNKNOWN
 
 
 class DecoderTypeInstance(BaseModelWithConfig):
