@@ -20,8 +20,8 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "httpx==0.28.1",
-    "pydantic==2.13.4",
+    "httpx>=0.23.0,<1.0.0",
+    "pydantic>=2.9.0,<3.0.0",
 ]
 
 [project.urls]
