@@ -3,7 +3,7 @@ site_url: https://machineq.readthedocs.io/en/latest/
 repo_url: https://github.com/OlegZv/machineq
 repo_name: OlegZv/machineq
 
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md]
+watch: [README.md, CONTRIBUTING.md]
 
 nav:
   - Home: index.md
