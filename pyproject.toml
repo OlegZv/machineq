@@ -37,8 +37,8 @@ dev = [
     "deptry==0.25.1",
     "ty==0.0.31",
     "pytest-cov==7.1.0",
-    "ruff==0.15.13",
-    "prek==0.4.0",
+    "ruff==0.15.14",
+    "prek==0.4.1",
     "ipykernel==7.2.0",
     "python-dotenv==1.2.2",
 ]
