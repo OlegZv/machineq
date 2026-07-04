@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from types import TracebackType
 
-import httpx
+import httpx2
 
 from machineq.auth import MqApiEnvironment, MqAuth
 from machineq.core.account.api import AsyncAccount
@@ -55,7 +55,7 @@ class AsyncClient:
         )
         self.api_version = version
         self.extra_prefix = extra_prefix
-        self.http_client = httpx.AsyncClient(headers={"User-Agent": f"machineq-py/{__version__}"})
+        self.http_client = httpx2.AsyncClient(headers={"User-Agent": f"machineq-py/{__version__}"})
 
         # Initialize all resource attributes
         self.account = AsyncAccount(self)
