@@ -65,15 +65,15 @@ class SyncLogs(BaseResource["SyncClient"]):
         if page is not None:
             params["Page"] = page
         if stream:
-            params["LogFrameFilter.Stream"] = stream
+            params["LogFrameFilter.Stream"] = stream.value
         if message_type:
-            params["LogFrameFilter.MessageType"] = message_type
+            params["LogFrameFilter.MessageType"] = message_type.value
         if late:
-            params["LogFrameFilter.Late"] = late
+            params["LogFrameFilter.Late"] = late.value
         if activation:
-            params["LogFrameFilter.Activation"] = activation
+            params["LogFrameFilter.Activation"] = activation.value
         if ack:
-            params["LogFrameFilter.Ack"] = ack
+            params["LogFrameFilter.Ack"] = ack.value
 
         response = self.client.http_client.get(
             url,
@@ -134,15 +134,15 @@ class AsyncLogs(BaseResource["AsyncClient"]):
         if page is not None:
             params["Page"] = page
         if stream:
-            params["LogFrameFilter.Stream"] = stream
+            params["LogFrameFilter.Stream"] = stream.value
         if message_type:
-            params["LogFrameFilter.MessageType"] = message_type
+            params["LogFrameFilter.MessageType"] = message_type.value
         if late:
-            params["LogFrameFilter.Late"] = late
+            params["LogFrameFilter.Late"] = late.value
         if activation:
-            params["LogFrameFilter.Activation"] = activation
+            params["LogFrameFilter.Activation"] = activation.value
         if ack:
-            params["LogFrameFilter.Ack"] = ack
+            params["LogFrameFilter.Ack"] = ack.value
 
         response = await self.client.http_client.get(
             url,
