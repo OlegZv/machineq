@@ -46,5 +46,4 @@ print(devices)
 - [ ] Enhanced Tracing
 - [ ] V2 API implementation
 - [ ] Enhanced Logging
-- [ ] Built-in helpful tools (multi-page `get_logs`, bulk async provision)
 - [ ] CLI tool

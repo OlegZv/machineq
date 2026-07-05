@@ -55,7 +55,7 @@ class AsyncClient:
         )
         self.api_version = version
         self.extra_prefix = extra_prefix
-        self.http_client = httpx2.AsyncClient(headers={"User-Agent": f"machineq-py/{__version__}"})
+        self.http_client = httpx2.AsyncClient(headers={"User-Agent": f"machineq-py/{__version__}"}, timeout=10)
 
         # Initialize all resource attributes
         self.account = AsyncAccount(self)

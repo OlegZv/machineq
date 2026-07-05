@@ -48,7 +48,7 @@ class SyncClient:
             env: API environment (default: production)
         """
         # Create HTTP client for this sync client
-        http_client = httpx2.Client(headers={"User-Agent": f"machineq-py/{__version__}"})
+        http_client = httpx2.Client(headers={"User-Agent": f"machineq-py/{__version__}"}, timeout=10)
         # Create auth with the sync client
         self.auth = MqAuth(
             client_id=client_id,
