@@ -38,7 +38,7 @@ dev = [
     "ty==0.0.31",
     "pytest-cov==7.1.0",
     "ruff==0.15.20",
-    "prek==0.4.5",
+    "prek==0.4.8",
     "ipykernel==7.3.0",
     "python-dotenv==1.2.2",
 ]
