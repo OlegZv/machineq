@@ -101,12 +101,12 @@ class SyncLogs(BaseResource["SyncClient"]):
         )
         if page is not None or not all_pages:
             # pulling either a specific page, or just a default "last" page (since all_pages is False)
-            return self.get_single_page(params)
+            return self._get_single_page(params)
 
         # pull all pages
         all_logs: list[LogInstance] = []
         params["Page"] = "1"
-        while new_page := self.get_single_page(params):
+        while new_page := self._get_single_page(params):
             all_logs.extend(new_page)
             if len(new_page) != DEFAULT_PER_PAGE:
                 # less than expected records per page means no more pages left
@@ -114,7 +114,7 @@ class SyncLogs(BaseResource["SyncClient"]):
             params["Page"] = str(int(params["Page"]) + 1)
         return all_logs
 
-    def get_single_page(self, params: dict[str, str]) -> list[LogInstance]:
+    def _get_single_page(self, params: dict[str, str]) -> list[LogInstance]:
         response = self.client.http_client.get(
             self._build_url(),
             params=params,
@@ -167,14 +167,14 @@ class AsyncLogs(BaseResource["AsyncClient"]):
         )
         if page is not None or not all_pages:
             # pulling either a specific page, or just a default "last" page (since all_pages is False)
-            return await self.get_single_page(params)
+            return await self._get_single_page(params)
         # pull all pages
         all_logs: list[LogInstance] = []
         params["Page"] = "1"
 
         # unfortunately the API doesn't tell us how many pages there are, so we
         # need to pull until we get less than DEFAULT_PER_PAGE sequentially
-        while new_page := await self.get_single_page(params):
+        while new_page := await self._get_single_page(params):
             all_logs.extend(new_page)
             if len(new_page) != DEFAULT_PER_PAGE:
                 # less than expected records per page means no more pages left
@@ -182,7 +182,7 @@ class AsyncLogs(BaseResource["AsyncClient"]):
             params["Page"] = str(int(params["Page"]) + 1)
         return all_logs
 
-    async def get_single_page(self, params: dict[str, str]) -> list[LogInstance]:
+    async def _get_single_page(self, params: dict[str, str]) -> list[LogInstance]:
         response = await self.client.http_client.get(
             self._build_url(),
             params=params,
