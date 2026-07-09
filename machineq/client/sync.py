@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from types import TracebackType
 
-import httpx
+import httpx2
 
 from machineq.auth import MqApiEnvironment, MqAuth
 from machineq.core.account.api import SyncAccount
@@ -48,7 +48,7 @@ class SyncClient:
             env: API environment (default: production)
         """
         # Create HTTP client for this sync client
-        http_client = httpx.Client(headers={"User-Agent": f"machineq-py/{__version__}"})
+        http_client = httpx2.Client(headers={"User-Agent": f"machineq-py/{__version__}"}, timeout=10)
         # Create auth with the sync client
         self.auth = MqAuth(
             client_id=client_id,

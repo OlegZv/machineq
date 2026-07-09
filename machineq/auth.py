@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 
-from httpx import Client, Response
+from httpx2 import Client, Response
 
 from .utils import __version__
 

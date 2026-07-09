@@ -1,5 +1,7 @@
 """Tests for Gateway API."""
 
+import asyncio
+
 import pytest
 from async_test_client import AsyncTestClient
 from sample_data.common import random_gateway_id, random_mac_address, random_name
@@ -56,6 +58,7 @@ class TestGateways:
             gateway = await gateways_api.get(created_id)
             assert gateway.id == created_id
         finally:
+            await asyncio.sleep(2)
             await gateways_api.delete(created_id)
 
     async def test_gateways_update_and_patch(self, client: AsyncTestClient, gateways_api: AsyncGateways):
@@ -112,6 +115,7 @@ class TestGateways:
             assert fetched.cellular_enabled == update_data.cellular_enabled
 
         finally:
+            await asyncio.sleep(2)
             await gateways_api.delete(created_id)
 
     async def test_get_statistics(self, gateways_api: AsyncGateways):
@@ -158,6 +162,7 @@ class TestGateways:
             assert gateway_id in [gw.node_id for gw in health.initializing]
 
         finally:
+            await asyncio.sleep(2)
             await gateways_api.delete(created_id)
 
     async def get_gateway_profile(self, client: AsyncTestClient) -> str:

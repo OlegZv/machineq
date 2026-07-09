@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "httpx>=0.23.0,<1.0.0",
+    "httpx2>=2.0.0",
     "pydantic>=2.9.0,<3.0.0",
 ]
 
@@ -35,10 +35,10 @@ dev = [
     "tox-uv==1.35.2",
     "pytest-asyncio==1.4.0",
     "deptry==0.25.1",
-    "ty==0.0.31",
+    "ty==0.0.57",
     "pytest-cov==7.1.0",
     "ruff==0.15.20",
-    "prek==0.4.5",
+    "prek==0.4.8",
     "ipykernel==7.3.0",
     "python-dotenv==1.2.2",
 ]

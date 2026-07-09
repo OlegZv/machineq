@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
-import httpx
+import httpx2
 from pydantic import BaseModel
 
 from machineq import MqApiEnvironment
@@ -83,11 +83,11 @@ class BaseResource(Generic[ClientType]):
     # fail type check, since it can only do that with a dict. Long term a better
     # way would be to possibly pass a type instance and return that type instance.
     @staticmethod
-    def _parse_response(response: httpx.Response) -> Any:  # noqa: ANN401
+    def _parse_response(response: httpx2.Response) -> Any:  # noqa: ANN401
         """Parse JSON response.
 
         Args:
-            response: httpx response
+            response: Response
 
         Returns:
             Parsed JSON or None if empty
