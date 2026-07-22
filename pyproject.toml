@@ -37,8 +37,8 @@ dev = [
     "deptry==0.25.1",
     "ty==0.0.57",
     "pytest-cov==7.1.0",
-    "ruff==0.15.20",
-    "prek==0.4.8",
+    "ruff==0.15.22",
+    "prek==0.4.10",
     "ipykernel==7.3.0",
     "python-dotenv==1.2.2",
 ]
@@ -47,7 +47,7 @@ docs = [
     "mkdocstrings",
     "mkdocstrings-python==2.0.5",
     "pymdown-extensions==10.21.3",
-    "zensical==0.0.46",
+    "zensical==0.0.51",
 ]
 
 [build-system]
