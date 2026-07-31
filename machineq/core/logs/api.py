@@ -90,7 +90,7 @@ class SyncLogs(BaseResource["SyncClient"]):
             ack: Optional acknowledgment flag filter.
             all_pages: Whether to pull all logs for the specified time period.
 
-            Note: without specifying `page` or `all_ages` the API will return only 1 page (100 records).
+            Without specifying `page` or `all_ages` the API will return only 1 page (100 records).
             If the `page` is provided, the `all_pages` is ignored.
 
         Returns:

@@ -21,6 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "httpx2>=2.0.0",
+    "markdown-exec[ansi]>=1.12.3",
     "pydantic>=2.9.0,<3.0.0",
 ]
 
