@@ -31,14 +31,14 @@ Documentation = "https://machineq.readthedocs.io/en/latest/"
 
 [dependency-groups]
 dev = [
-    "pytest==9.1.1",
+    "pytest==9.2.0",
     "tox-uv==1.36.1",
-    "pytest-asyncio==1.4.0",
+    "pytest-asyncio==1.4.1",
     "deptry==0.25.1",
     "ty==0.0.57",
     "pytest-cov==7.1.0",
-    "ruff==0.17.0",
-    "prek==0.5.5",
+    "ruff==0.17.3",
+    "prek==0.5.9",
     "ipykernel==7.3.0",
     "python-dotenv==1.2.4",
 ]
@@ -47,7 +47,7 @@ docs = [
     "markdown-exec[ansi]>=1.12.3",
     "mkdocstrings",
     "mkdocstrings-python==2.0.9",
-    "pymdown-extensions==12.0.1",
+    "pymdown-extensions==12.3",
     "zensical==0.0.67",
 ]
 
